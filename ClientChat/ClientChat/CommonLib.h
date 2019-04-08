@@ -8,7 +8,7 @@
 
 //SERVER WILL NOT READ THIS VALUE FROM CLIENT.
 struct CommonTime {
-	int second, minute, hour, date, month, year;
+	int second, minute, hour, day, month, year;
 };
 
 //Data for exchaging between server and client
