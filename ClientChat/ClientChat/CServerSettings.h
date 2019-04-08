@@ -22,4 +22,5 @@ class CServerSettings : public CDialog {
 
 	public:
 		DWORD serverIP;
+		UINT serverPort;
 };
