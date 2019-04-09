@@ -23,6 +23,8 @@ class CClientChatView : public CFormView {
 
 	// Operations
 	public:
+		UINT UpdateConversation();
+		static UINT ThreadUpdateConversation(LPVOID Param);
 
 	// Overrides
 	public:

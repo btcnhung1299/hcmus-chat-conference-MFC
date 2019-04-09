@@ -56,6 +56,28 @@ void CClientChatView::OnInitialUpdate() {
 	CFormView::OnInitialUpdate();
 	GetParentFrame()->RecalcLayout();
 	ResizeParentToFit();
+	
+	if (!AfxBeginThread(ThreadUpdateConversation, reinterpret_cast<LPVOID>(this), THREAD_PRIORITY_NORMAL, 0, 0, NULL)) {
+		AfxMessageBox(L"Failed creating thread");
+	}
+}
+
+UINT CClientChatView::ThreadUpdateConversation(LPVOID Param) {
+	CClientChatView *pThis = reinterpret_cast<CClientChatView *>(Param);
+	pThis->GetDocument()->InitListener();
+	BOOL end = false;
+	
+	while (!end) {
+		pThis->UpdateConversation();
+	}
+	return 0;
+}
+
+UINT CClientChatView::UpdateConversation() {
+	std::pair<CString, CString> msg;
+	GetDocument()->receive(msg);
+	AfxMessageBox(L"abc");
+	return 0;
 }
 
 void CClientChatView::OnRButtonUp(UINT /* nFlags */, CPoint point) {

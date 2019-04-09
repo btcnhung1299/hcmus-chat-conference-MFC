@@ -54,6 +54,7 @@ CClientChatDoc::CClientChatDoc() noexcept {
 
 	char commandCode = 'a';
 	char loggedin = 'X';
+	receivePort = 0;
 
 	while (loggedin != 'O' && loginDlg.DoModal() == btnOKLogin) {
 		username = loginDlg.GetUsername();
@@ -69,6 +70,7 @@ CClientChatDoc::CClientChatDoc() noexcept {
 			AfxMessageBox(L"Can't send user info");
 		}
 
+		clntSock.Send(&receivePort, 4, 0);
 		clntSock.Receive(&loggedin, 1, 0);
 	}
 
@@ -124,6 +126,35 @@ void CClientChatDoc::send(CString msg) {
 	}
 
 	clntSock.Close();
+}
+
+void CClientChatDoc::InitListener() {
+	if (!listener.Create()) {
+		AfxMessageBox(L"Can't create listener");
+	}
+}
+
+void CClientChatDoc::receive(std::pair<CString, CString>& msg) {
+	int len;
+	char bufferFrom[256];
+	char bufferContent[256];
+
+	if (!listener.Listen()) {
+		AfxMessageBox(L"Can't listen");
+	}
+	listener.Accept(receiver);
+
+	AfxMessageBox(L"Connect");
+
+	receiver.Receive(&len, 4, 0);
+	receiver.Receive(&bufferFrom, len, 0);
+	bufferFrom[len] = '\0';
+
+	receiver.Receive(&len, 4, 0);
+	receiver.Receive(&bufferContent, len, 0);
+	bufferContent[len] = '\0';
+		
+	msg = std::make_pair(CString(bufferFrom), CString(bufferContent));
 }
 
 

@@ -1,15 +1,17 @@
 #pragma once
 #include "CServerSettings.h"
 #include "CLogin.h"
+#include <utility>
 #include <afxsock.h>
 
 class CClientChatDoc : public CDocument {
 	private:
-		CSocket clntSock;
+		CSocket clntSock, listener, receiver;
 
 		UINT serverPort;
 		CString serverIP;
-		int contactPort;
+		UINT contactPort;
+		UINT receivePort;
 
 		CString username;
 		CString password;
@@ -23,6 +25,7 @@ class CClientChatDoc : public CDocument {
 
 	// Operations
 	public:
+		void InitListener();
 
 	// Overrides
 	public:
@@ -36,7 +39,9 @@ class CClientChatDoc : public CDocument {
 	// Implementation
 	public:
 		virtual ~CClientChatDoc();
+		
 		void send(CString msg);
+		void receive(std::pair<CString, CString>&);
 
 	#ifdef _DEBUG
 		virtual void AssertValid() const;
