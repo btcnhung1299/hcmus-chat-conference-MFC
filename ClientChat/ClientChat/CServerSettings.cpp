@@ -8,8 +8,7 @@
 
 IMPLEMENT_DYNAMIC(CServerSettings, CDialog)
 
-CServerSettings::CServerSettings(CWnd* pParent /*=nullptr*/) : CDialog(IDD_ServerSettings, pParent)
-{
+CServerSettings::CServerSettings(CWnd* pParent /*=nullptr*/) : CDialog(IDD_ServerSettings, pParent) {
 }
 
 CServerSettings::~CServerSettings() {
@@ -52,7 +51,7 @@ void CServerSettings::OnBtnClickConnect() {
 }
 
 void CServerSettings::OnBtnClickCancel() {
-	EndDialog(btnConnect);
+	EndDialog(0);
 }
 
 CString CServerSettings::GetServerIP() {

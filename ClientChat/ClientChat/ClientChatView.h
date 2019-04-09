@@ -1,5 +1,6 @@
 #pragma once
 #include "CServerSettings.h"
+#include "CLogin.h"
 
 class CClientChatView : public CFormView {
 	private:

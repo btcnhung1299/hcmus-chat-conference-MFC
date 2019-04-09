@@ -39,6 +39,9 @@
     <ClInclude Include="CServerSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CLogin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClientChat.cpp">
@@ -57,6 +60,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CServerSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CLogin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

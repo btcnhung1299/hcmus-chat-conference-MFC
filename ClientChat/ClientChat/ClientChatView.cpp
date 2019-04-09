@@ -52,6 +52,7 @@ void CClientChatView::OnInitialUpdate() {
 
 	CServerSettings serverSettingsDlg;
 	serverSettingsDlg.DoModal();
+	CLogin loginDlg;
 	loginDlg.DoModal();
 }
 

@@ -32,6 +32,7 @@
 #define ID_VIEW_APPLOOK_WINDOWS_7       219
 #define IDS_EDIT_MENU                   306
 #define IDD_ServerSettings              312
+#define IDD_Login                       316
 #define inpSendMsg                      1000
 #define titleChatBox                    1001
 #define OutpConversation                1002
@@ -49,14 +50,23 @@
 #define btnCancel                       1023
 #define titleServerIP                   1024
 #define titleServerPort                 1025
+#define inpUsername                     1026
+#define inpPassword                     1027
+#define chooseLogin                     1028
+#define chooseRegister                  1029
+#define titleUsername                   1030
+#define titlePassword                   1031
+#define btnOKLogin                      1032
+#define btnCancelLogin                  1033
+#define grpActionLogin                  1034
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        316
+#define _APS_NEXT_RESOURCE_VALUE        318
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1026
+#define _APS_NEXT_CONTROL_VALUE         1035
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

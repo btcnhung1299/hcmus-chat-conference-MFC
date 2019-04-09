@@ -186,6 +186,7 @@
     <ClInclude Include="ClientChat.h" />
     <ClInclude Include="ClientChatDoc.h" />
     <ClInclude Include="ClientChatView.h" />
+    <ClInclude Include="CLogin.h" />
     <ClInclude Include="CServerSettings.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="Resource.h" />
@@ -196,6 +197,7 @@
     <ClCompile Include="ClientChat.cpp" />
     <ClCompile Include="ClientChatDoc.cpp" />
     <ClCompile Include="ClientChatView.cpp" />
+    <ClCompile Include="CLogin.cpp" />
     <ClCompile Include="CServerSettings.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="stdafx.cpp">
