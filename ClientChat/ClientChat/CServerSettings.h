@@ -7,6 +7,9 @@ class CServerSettings : public CDialog {
 	public:
 		CServerSettings(CWnd* pParent = nullptr);   // standard constructor
 		virtual ~CServerSettings();
+		
+		UINT GetServerPort();
+		CString GetServerIP();
 
 	// Dialog Data
 	#ifdef AFX_DESIGN_TIME
@@ -20,7 +23,7 @@ class CServerSettings : public CDialog {
 		afx_msg void OnBtnClickCancel();
 		DECLARE_MESSAGE_MAP()
 
-	public:
-		DWORD serverIP;
-		UINT serverPort;
+	private:
+		CIPAddressCtrl m_serverIP;
+		CEdit m_serverPort;
 };

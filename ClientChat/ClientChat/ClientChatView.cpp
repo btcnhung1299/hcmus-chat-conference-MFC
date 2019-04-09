@@ -7,6 +7,7 @@
 
 #include "ClientChatDoc.h"
 #include "ClientChatView.h"
+#include <afxsock.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -50,9 +51,8 @@ void CClientChatView::OnInitialUpdate() {
 	ResizeParentToFit();
 
 	CServerSettings serverSettingsDlg;
-	if (serverSettingsDlg.DoModal() == btnConnect) {
-		serverIP = serverSettingsDlg.serverIP;
-	}
+	serverSettingsDlg.DoModal();
+	loginDlg.DoModal();
 }
 
 void CClientChatView::OnRButtonUp(UINT /* nFlags */, CPoint point) {
