@@ -10,6 +10,10 @@ class CLogin : public CDialog {
 		CLogin(CWnd* pParent = nullptr);   // standard constructor
 		virtual ~CLogin();
 
+		CString GetUsername() { return username; }
+		CString GetPassword() { return password; }
+		int GetLoginOption() { return loginOption; }
+
 	// Dialog Data
 	#ifdef AFX_DESIGN_TIME
 		enum { IDD = IDD_Login };
@@ -19,8 +23,20 @@ class CLogin : public CDialog {
 		virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 		DECLARE_MESSAGE_MAP()
 
+		
+
 	public:
-		afx_msg void OnBntClickChooseLogin();
-		afx_msg void OnBntClickChooseRegister();
-		int m_loginOption;
+		/*afx_msg void OnBntClickChooseLogin();
+		afx_msg void OnBntClickChooseRegister();*/
+		afx_msg void OnBntClickOKLogin();
+		afx_msg void OnBntClickCancelLogin();
+
+		int loginOption;
+		CString username;
+		CString password;
+
+		CEdit m_username;
+		CEdit m_password;
+		afx_msg void OnBtnClickChooseLogin();
+		afx_msg void OnBtnClickChooseRegister();
 };

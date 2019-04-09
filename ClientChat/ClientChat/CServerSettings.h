@@ -18,12 +18,14 @@ class CServerSettings : public CDialog {
 
 	protected:
 		virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-
-		afx_msg void OnBtnClickConnect();
 		afx_msg void OnBtnClickCancel();
+		afx_msg void OnBtnClickConnect();
 		DECLARE_MESSAGE_MAP()
 
 	private:
 		CIPAddressCtrl m_serverIP;
 		CEdit m_serverPort;
+
+		UINT serverPort;
+		CString serverIP;
 };

@@ -21,12 +21,13 @@ IMPLEMENT_DYNCREATE(CClientChatView, CFormView)
 BEGIN_MESSAGE_MAP(CClientChatView, CFormView)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
+	ON_BN_CLICKED(btnSendMsg, &CClientChatView::OnBtnClickSendMsg)
 END_MESSAGE_MAP()
 
 // CClientChatView construction/destruction
 
 CClientChatView::CClientChatView() noexcept
-: CFormView(IDD_CLIENTCHAT_FORM) {
+: CFormView(IDD_MainWnd) {
 	// TODO: add construction code here
 
 }
@@ -34,8 +35,14 @@ CClientChatView::CClientChatView() noexcept
 CClientChatView::~CClientChatView() {
 }
 
+void CClientChatView::OnBtnClickSendMsg() {
+	m_inpSendMsg.GetWindowText(sendMsg);
+	GetDocument()->send(sendMsg);
+}
+
 void CClientChatView::DoDataExchange(CDataExchange* pDX) {
 	CFormView::DoDataExchange(pDX);
+	DDX_Control(pDX, inpSendMsg, m_inpSendMsg);
 }
 
 BOOL CClientChatView::PreCreateWindow(CREATESTRUCT& cs) {
@@ -49,11 +56,6 @@ void CClientChatView::OnInitialUpdate() {
 	CFormView::OnInitialUpdate();
 	GetParentFrame()->RecalcLayout();
 	ResizeParentToFit();
-
-	CServerSettings serverSettingsDlg;
-	serverSettingsDlg.DoModal();
-	CLogin loginDlg;
-	loginDlg.DoModal();
 }
 
 void CClientChatView::OnRButtonUp(UINT /* nFlags */, CPoint point) {
@@ -86,4 +88,3 @@ CClientChatDoc* CClientChatView::GetDocument() const {
 #endif //_DEBUG
 
 
-// CClientChatView message handlers

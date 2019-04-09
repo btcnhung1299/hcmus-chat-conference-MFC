@@ -24,8 +24,55 @@ END_MESSAGE_MAP()
 // CClientChatDoc construction/destruction
 
 CClientChatDoc::CClientChatDoc() noexcept {
-	// TODO: add one-time construction code here
+	AfxSocketInit(NULL);
+	if (!clntSock.Create()) {
+		AfxMessageBox(L"Can't create socket");
+	}
 
+	CServerSettings serverSettingsDlg;
+	BOOL connected = false;
+
+	while (!connected && serverSettingsDlg.DoModal() == btnConnect) {
+		serverPort = serverSettingsDlg.GetServerPort();
+		serverIP = serverSettingsDlg.GetServerIP();
+		if (clntSock.Connect(serverIP, serverPort)) {
+			connected = true;
+			clntSock.Receive(&contactPort, 4, 0);
+		}
+	}
+
+	clntSock.Close();
+	if (!clntSock.Create()) {
+		AfxMessageBox(L"Can't create socket");
+	}
+
+	if (!clntSock.Connect(serverIP, contactPort)) {
+		AfxMessageBox(L"Can't connect to contact port provided");
+	}
+
+	CLogin loginDlg;
+
+	char commandCode = 'a';
+	char loggedin = 'X';
+
+	while (loggedin != 'O' && loginDlg.DoModal() == btnOKLogin) {
+		username = loginDlg.GetUsername();
+		password = loginDlg.GetPassword();
+		int loginOption = loginDlg.GetLoginOption();
+		
+		clntSock.Send(&commandCode, 1, 0);
+		CT2A  bufferUsername(username, CP_UTF8);
+		int len = sizeof(bufferUsername);
+		clntSock.Send(&len, 4, 0);
+		
+		if (clntSock.Send(bufferUsername, len, 0) != len) {
+			AfxMessageBox(L"Can't send user info");
+		}
+
+		clntSock.Receive(&loggedin, 1, 0);
+	}
+
+	clntSock.Close();
 }
 
 CClientChatDoc::~CClientChatDoc() {
@@ -42,7 +89,42 @@ BOOL CClientChatDoc::OnNewDocument() {
 	return TRUE;
 }
 
+void CClientChatDoc::send(CString msg) {
+	if (!clntSock.Create()) {
+		AfxMessageBox(L"Can't create socket");
+	}
 
+	if (!clntSock.Connect(serverIP, serverPort)) {
+		AfxMessageBox(L"Can't connect to server");
+	}
+
+	if (!clntSock.Receive(&contactPort, 4, 0)) {
+		AfxMessageBox(L"Didn't receive contact port from server");
+	}
+
+	clntSock.Close();
+	
+	if (!clntSock.Create()) {
+		AfxMessageBox(L"Can't create socket");
+	}
+
+	if (!clntSock.Connect(serverIP, contactPort)) {
+		AfxMessageBox(L"Can't connect to contace port provided");
+	}
+
+	char commandCode = 'c';
+	clntSock.Send(&commandCode, 1, 0);
+	
+	CT2A  buffer(msg, CP_UTF8);
+	int len = sizeof(buffer);
+	clntSock.Send(&len, 4, 0);
+
+	if (clntSock.Send(buffer, len, 0) != len) {
+		AfxMessageBox(L"Can't send msg");
+	}
+
+	clntSock.Close();
+}
 
 
 // CClientChatDoc serialization

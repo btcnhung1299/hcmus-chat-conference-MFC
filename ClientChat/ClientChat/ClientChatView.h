@@ -2,9 +2,11 @@
 #include "CServerSettings.h"
 #include "CLogin.h"
 
+
 class CClientChatView : public CFormView {
 	private:
-		DWORD serverIP;
+		CEdit m_inpSendMsg;
+		CString sendMsg;
 
 	protected: 									// create from serialization only
 		CClientChatView() noexcept;
@@ -12,7 +14,7 @@ class CClientChatView : public CFormView {
 
 	public:
 	#ifdef AFX_DESIGN_TIME
-		enum{ IDD = IDD_CLIENTCHAT_FORM };
+		enum{ IDD = IDD_MainWnd };
 	#endif
 
 	// Attributes
@@ -44,7 +46,10 @@ class CClientChatView : public CFormView {
 
 		afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 		afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+		afx_msg void OnBtnClickSendMsg();
 		DECLARE_MESSAGE_MAP()
+
+
 };
 
 #ifndef _DEBUG  // debug version in ClientChatView.cpp

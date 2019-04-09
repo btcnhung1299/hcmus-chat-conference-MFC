@@ -1,6 +1,19 @@
 #pragma once
+#include "CServerSettings.h"
+#include "CLogin.h"
+#include <afxsock.h>
 
 class CClientChatDoc : public CDocument {
+	private:
+		CSocket clntSock;
+
+		UINT serverPort;
+		CString serverIP;
+		int contactPort;
+
+		CString username;
+		CString password;
+
 	protected: 						// create from serialization only
 		CClientChatDoc() noexcept;
 		DECLARE_DYNCREATE(CClientChatDoc)
@@ -23,6 +36,8 @@ class CClientChatDoc : public CDocument {
 	// Implementation
 	public:
 		virtual ~CClientChatDoc();
+		void send(CString msg);
+
 	#ifdef _DEBUG
 		virtual void AssertValid() const;
 		virtual void Dump(CDumpContext& dc) const;
@@ -33,6 +48,8 @@ class CClientChatDoc : public CDocument {
 	// Generated message map functions
 	protected:
 		DECLARE_MESSAGE_MAP()
+
+
 
 	#ifdef SHARED_HANDLERS
 		// Helper function that sets search content for a Search Handler
