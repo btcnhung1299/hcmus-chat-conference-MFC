@@ -5,17 +5,32 @@
 
 using namespace std;
 
+void convertStr2WStr(string& str, wstring& wstr) {
+	int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
+	wstr.clear();
+	wstr.resize(size_needed, 0);
+	MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstr[0], size_needed);
+}
 
-// ==== PRIVATE FUNCTIONS -- SUPPORT THIS CPP ONLY
+//Extract data from a standard data
+string GetData(char * fullData, char * dataName) {
+	string res;
+	return res;
+}
 
-void SendString(CSocket& sock, const char * charArr) {
+void SendCharArr(CSocket& sock, const char * charArr) {
 	int charArrLen = strlen(charArr);
 	sock.Send(&charArrLen, sizeof(int), 0);
 	sock.Send(charArr, charArrLen, 0);
+
+	//for (int i = 0; i < charArrLen; i++)
+	//{
+	//	sock.Send(&charArr[i], 1, 0);
+	//}
 }
 
-void SendString(CSocket& sock, string& str) {
-	SendString(sock, str.data());
+void SendCharArr(CSocket& sock, string& str) {
+	SendCharArr(sock, str.data());
 }
 
 void ReceiveString(CSocket& sock, char *& charArr) {
@@ -30,32 +45,19 @@ void ReceiveString(CSocket& sock, string& str) {
 	char * tmpCharArr;
 	ReceiveString(sock, tmpCharArr);
 	str = tmpCharArr;
-	delete[] tmpCharArr;
-}
-
-
-
-// ==== PUBLIC FUNCTIONS -- USE IN OTHER CPP
-
-
-void convertStr2WStr(string& str, wstring& wstr) {
-	int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
-	wstr.clear();
-	wstr.resize(size_needed, 0);
-	MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstr[0], size_needed);
 }
 
 void SendCommonData(CSocket& sock, CommonData& data) {
 	//Send Type
-	SendString(sock, data.type);
+	SendCharArr(sock, data.type);
 	//Send From
-	SendString(sock, data.from);
+	SendCharArr(sock, data.from);
 	//Send To
-	SendString(sock, data.to);
+	SendCharArr(sock, data.to);
 	//Send message
-	SendString(sock, data.message);
+	SendCharArr(sock, data.message);
 	//Send timeStampt
-	sock.Send(&data.timeStamp, sizeof(CommonTime), 0);
+	sock.Send(&data.timeStampt, sizeof(CommonTime), 0);
 	//Send fileSize
 	sock.Send(&data.fileSize, sizeof(int), 0);
 }
@@ -70,7 +72,7 @@ void ReceiveCommonData(CSocket& sock, CommonData& data) {
 	//Receive message
 	ReceiveString(sock, data.message);
 	//Receive timeStampt
-	sock.Receive(&data.timeStamp, sizeof(CommonTime), 0);
+	sock.Receive(&data.timeStampt, sizeof(CommonTime), 0);
 	//Receive fileSize
 	sock.Receive(&data.fileSize, sizeof(int), 0);
 }
