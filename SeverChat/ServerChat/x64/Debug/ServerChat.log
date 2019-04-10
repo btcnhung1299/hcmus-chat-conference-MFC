@@ -1,1 +1,12 @@
-﻿  ServerChat.vcxproj -> C:\Users\Jason\Documents\GitHub\chat_conference\SeverChat\x64\Debug\ServerChat.exe
+﻿  Server.cpp
+c:\users\tran dinh ton hieu\documents\visual studio 2017\projects\socket_computernetwork\chat_conference\severchat\serverchat\server.cpp(164): warning C4101: 'tmpSockPtr': unreferenced local variable
+c:\users\tran dinh ton hieu\documents\visual studio 2017\projects\socket_computernetwork\chat_conference\severchat\serverchat\server.cpp(222): warning C4101: 'buffer': unreferenced local variable
+c:\users\tran dinh ton hieu\documents\visual studio 2017\projects\socket_computernetwork\chat_conference\severchat\serverchat\server.cpp(427): warning C4267: 'argument': conversion from 'size_t' to 'const _Elem', possible loss of data
+          with
+          [
+              _Elem=char
+          ]
+c:\users\tran dinh ton hieu\documents\visual studio 2017\projects\socket_computernetwork\chat_conference\severchat\serverchat\server.cpp(492): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+c:\users\tran dinh ton hieu\documents\visual studio 2017\projects\socket_computernetwork\chat_conference\severchat\serverchat\server.cpp(484): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\stdio.h(208): note: see declaration of 'fopen'
+  ServerChat.vcxproj -> C:\Users\Tran Dinh Ton Hieu\Documents\Visual Studio 2017\Projects\SOCKET_COMPUTERNETWORK\chat_conference\SeverChat\x64\Debug\ServerChat.exe
