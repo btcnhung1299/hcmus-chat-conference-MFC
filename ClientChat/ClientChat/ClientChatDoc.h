@@ -1,5 +1,6 @@
 #pragma once
 #include "CServerSettings.h"
+#include "CommonLib.h"
 #include "CLogin.h"
 #include <utility>
 #include <afxsock.h>

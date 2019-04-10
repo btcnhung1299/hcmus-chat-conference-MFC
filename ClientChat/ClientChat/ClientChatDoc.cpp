@@ -42,6 +42,7 @@ CClientChatDoc::CClientChatDoc() noexcept {
 	}
 
 	clntSock.Close();
+
 	if (!clntSock.Create()) {
 		AfxMessageBox(L"Can't create socket");
 	}
@@ -52,16 +53,26 @@ CClientChatDoc::CClientChatDoc() noexcept {
 
 	CLogin loginDlg;
 
-	char commandCode = 'a';
-	char loggedin = 'X';
-	receivePort = 0;
+	CommonData loginInfo;
+	int loginOption = 0;
+	
+	BOOL loginStatus = false;
 
-	while (loggedin != 'O' && loginDlg.DoModal() == btnOKLogin) {
+	while (!loginStatus && loginDlg.DoModal() == btnOKLogin) {
+		// Save username to global variable for later use
 		username = loginDlg.GetUsername();
-		password = loginDlg.GetPassword();
-		int loginOption = loginDlg.GetLoginOption();
+		loginOption = loginDlg.GetLoginOption();
+		CT2CA bufferUsername(username, CP_UTF8);
+		CT2CA bufferPassword(loginDlg.GetPassword(), CP_UTF8);
 		
-		clntSock.Send(&commandCode, 1, 0);
+		loginInfo.from = std::to_string(contactPort);
+		loginInfo.type = (loginOption == 0 ? "li" : "re");
+		loginInfo.fileSize = username.GetLength();
+		loginInfo.message = std::string(bufferUsername) + std::string(bufferPassword);
+		
+		SendCommonData(clntSock, loginInfo);
+
+		/*clntSock.Send(&commandCode, 1, 0);
 		CT2A  bufferUsername(username, CP_UTF8);
 		int len = sizeof(bufferUsername);
 		clntSock.Send(&len, 4, 0);
@@ -71,7 +82,7 @@ CClientChatDoc::CClientChatDoc() noexcept {
 		}
 
 		clntSock.Send(&receivePort, 4, 0);
-		clntSock.Receive(&loggedin, 1, 0);
+		clntSock.Receive(&loggedin, 1, 0);*/
 	}
 
 	clntSock.Close();

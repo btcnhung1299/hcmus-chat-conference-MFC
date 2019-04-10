@@ -198,6 +198,7 @@
     <ClCompile Include="ClientChatDoc.cpp" />
     <ClCompile Include="ClientChatView.cpp" />
     <ClCompile Include="CLogin.cpp" />
+    <ClCompile Include="CommonLib.cpp" />
     <ClCompile Include="CServerSettings.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="stdafx.cpp">
