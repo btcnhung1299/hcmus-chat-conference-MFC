@@ -73,6 +73,6 @@ void ReceiveCommonData(CSocket& sock, CommonData& data) {
 	ReceiveString(sock, data.message);
 	//Receive timeStampt
 	sock.Receive(&data.timeStampt, sizeof(CommonTime), 0);
-	//Receive fileSize
+	//Receive fileSize	
 	sock.Receive(&data.fileSize, sizeof(int), 0);
 }
