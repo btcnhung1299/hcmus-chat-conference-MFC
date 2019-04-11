@@ -5,3 +5,12 @@
 ServerChat/.vs/ServerChat/v15/.suo
 ServerChat/ServerChat/x64/Debug/ServerChat.log
 *.log
+*.log
+ServerChat/ServerChat/x64/Debug/ServerChat.log
+*.obj
+*.tlog
+*.ilk
+*.pdb
+*.lastbuildstate
+*.exe
+*.vcxproj
