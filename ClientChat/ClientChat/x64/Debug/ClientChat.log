@@ -1,2 +1,13 @@
-﻿  ClientChatView.cpp
-  ClientChat.vcxproj -> C:\Users\Jason\Documents\GitHub\chat_conference\ClientChat\x64\Debug\ClientChat.exe
+﻿  stdafx.cpp
+  ClientChat.cpp
+  ClientChatDoc.cpp
+  ClientChatView.cpp
+  CLogin.cpp
+  CNoti.cpp
+  CommonLib.cpp
+c:\users\jason\documents\github\clientchat\clientchat\commonlib.cpp(12): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  CServerSettings.cpp
+  MainFrm.cpp
+  Generating Code...
+  LINK : C:\Users\Jason\Documents\GitHub\ClientChat\x64\Debug\ClientChat.exe not found or not built by the last incremental link; performing full link
+  ClientChat.vcxproj -> C:\Users\Jason\Documents\GitHub\ClientChat\x64\Debug\ClientChat.exe

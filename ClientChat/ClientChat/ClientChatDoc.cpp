@@ -142,6 +142,8 @@ BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 		AfxMessageBox(L"Can't connect to contace port provided");
 	}
 
+	CT2CA bufferUsername(username, CP_UTF8);
+	dataSend.from = std::string(bufferUsername);
 	SendCommonData(clntSock, dataSend);
 	ReceiveCommonData(clntSock, dataResponse);
 
