@@ -8,7 +8,7 @@
 
 class CClientChatDoc : public CDocument {
 	private:
-		CSocket clntSock, listener, receiver;
+		CSocket clntSock, listenerConv, listenerUser, receiverConv, receiverUser;
 
 		UINT serverPort;
 		CString serverIP;
@@ -27,7 +27,8 @@ class CClientChatDoc : public CDocument {
 
 	// Operations
 	public:
-		void InitListener();
+		void InitListenerConv();
+		void InitListenerUser();
 
 	// Overrides
 	public:
@@ -42,8 +43,9 @@ class CClientChatDoc : public CDocument {
 	public:
 		virtual ~CClientChatDoc();
 		
-		void Send(CommonData&);
-		void receive(std::pair<CString, CString>&);
+		BOOL Send(CommonData&, CommonData&);
+		void ReceiveConv(std::pair<CString, CString>&);
+		void ReceiveUser();
 
 	#ifdef _DEBUG
 		virtual void AssertValid() const;

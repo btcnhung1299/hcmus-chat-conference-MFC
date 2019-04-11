@@ -183,7 +183,6 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CCreateGroup.h" />
     <ClInclude Include="ClientChat.h" />
     <ClInclude Include="ClientChatDoc.h" />
     <ClInclude Include="ClientChatView.h" />
@@ -193,11 +192,9 @@
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="TabChatBox.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CCreateGroup.cpp" />
     <ClCompile Include="ClientChat.cpp" />
     <ClCompile Include="ClientChatDoc.cpp" />
     <ClCompile Include="ClientChatView.cpp" />
@@ -212,7 +209,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TabChatBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ClientChat.rc" />

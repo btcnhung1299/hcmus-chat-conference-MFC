@@ -119,7 +119,7 @@ BOOL CClientChatDoc::OnNewDocument() {
 	return TRUE;
 }
 
-void CClientChatDoc::Send(CommonData& data) {
+BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 	if (!clntSock.Create()) {
 		AfxMessageBox(L"Can't create socket");
 	}
@@ -142,42 +142,56 @@ void CClientChatDoc::Send(CommonData& data) {
 		AfxMessageBox(L"Can't connect to contace port provided");
 	}
 
-	
-	SendCommonData(clntSock, data);
-	
+	SendCommonData(clntSock, dataSend);
+	ReceiveCommonData(clntSock, dataResponse);
+
+	BOOL res = false;
+	if (dataSend.type == "cg") {
+		res = (dataResponse.type == "cg" ? true : false);
+	}
 
 	clntSock.Close();
+	return res;
 }
 
-void CClientChatDoc::InitListener() {
-	if (!listener.Create()) {
+void CClientChatDoc::InitListenerConv() {
+	if (!listenerConv.Create()) {
 		AfxMessageBox(L"Can't create listener");
 	}
 }
 
-void CClientChatDoc::receive(std::pair<CString, CString>& msg) {
+void CClientChatDoc::InitListenerUser() {
+	if (!listenerConv.Create()) {
+		AfxMessageBox(L"Can't create listener");
+	}
+}
+
+void CClientChatDoc::ReceiveConv(std::pair<CString, CString>& msg) {
 	int len;
 	char bufferFrom[256];
 	char bufferContent[256];
 
-	if (!listener.Listen()) {
+	if (!listenerConv.Listen()) {
 		AfxMessageBox(L"Can't listen");
 	}
-	listener.Accept(receiver);
+	listenerConv.Accept(receiverConv);
 
 	AfxMessageBox(L"Connect");
 
-	receiver.Receive(&len, 4, 0);
-	receiver.Receive(&bufferFrom, len, 0);
+	receiverConv.Receive(&len, 4, 0);
+	receiverConv.Receive(&bufferFrom, len, 0);
 	bufferFrom[len] = '\0';
 
-	receiver.Receive(&len, 4, 0);
-	receiver.Receive(&bufferContent, len, 0);
+	receiverConv.Receive(&len, 4, 0);
+	receiverConv.Receive(&bufferContent, len, 0);
 	bufferContent[len] = '\0';
 		
 	msg = std::make_pair(CString(bufferFrom), CString(bufferContent));
 }
 
+void CClientChatDoc::ReceiveUser() {
+
+}
 
 // CClientChatDoc serialization
 

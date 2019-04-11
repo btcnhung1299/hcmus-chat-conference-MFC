@@ -34,7 +34,6 @@
 #define IDD_ServerSettings              312
 #define IDD_Login                       316
 #define IDD_Noti                        318
-#define IDD_CreateGroup                 320
 #define inpServerIP                     1020
 #define inpServerPort                   1021
 #define btnConnect                      1022
@@ -54,17 +53,19 @@
 #define titleNoti                       1036
 #define tabChatBox                      1040
 #define btnNewTab                       1041
-#define lstUsers                        1045
-#define btnCreateGroup                  1046
-#define btnCancelCreateGroup            1047
+#define btnCreateNewGroup               1049
+#define btnSendMsg                      1050
+#define grpOnlineUsers                  1051
+#define IDC_LIST2                       1053
+#define lstOnlineUsers                  1053
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        323
+#define _APS_NEXT_RESOURCE_VALUE        324
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1048
+#define _APS_NEXT_CONTROL_VALUE         1054
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

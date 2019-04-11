@@ -1,5 +1,2 @@
-﻿  ClientChat.cpp
-  ClientChatDoc.cpp
-  ClientChatView.cpp
-  Generating Code...
+﻿  ClientChatView.cpp
   ClientChat.vcxproj -> C:\Users\Jason\Documents\GitHub\chat_conference\ClientChat\x64\Debug\ClientChat.exe

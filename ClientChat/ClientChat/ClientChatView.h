@@ -1,10 +1,9 @@
 #pragma once
 
-#include "TabChatBox.h"
 
 class CClientChatView : public CFormView {
-	private:
-		TabChatBox m_tabChatBox;
+	public:
+		CListBox m_lstOnlineUsers;
 
 	protected: 									// create from serialization only
 		CClientChatView() noexcept;
@@ -21,7 +20,9 @@ class CClientChatView : public CFormView {
 
 	// Operations
 	public:
-		UINT UpdateConversation();
+		UINT UpdateOnlineUsersOnView();
+		UINT UpdateConversationOnView();
+		static UINT ThreadUpdateOnlineUsers(LPVOID Param);
 		static UINT ThreadUpdateConversation(LPVOID Param);
 
 	// Overrides
@@ -43,11 +44,13 @@ class CClientChatView : public CFormView {
 
 	// Generated message map functions
 	protected:
-		afx_msg void OnBtnClickNewTab();
+		afx_msg void OnBtnClickCreateGroup();
 		afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 		afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 		DECLARE_MESSAGE_MAP()
-
+	
+public:
+	
 };
 
 #ifndef _DEBUG  // debug version in ClientChatView.cpp
