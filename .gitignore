@@ -14,3 +14,7 @@ ServerChat/ServerChat/x64/Debug/ServerChat.log
 *.lastbuildstate
 *.exe
 *.vcxproj
+ClientChat/.vs/ClientChat/v15/.suo
+*.log
+*.obj
+*.pch
