@@ -1,18 +1,7 @@
-﻿  stdafx.cpp
-  CommonLib.cpp
-c:\users\jason\documents\github\v1\serverchat\serverchat\commonlib.cpp(22): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-  Server.cpp
-c:\users\jason\documents\github\v1\serverchat\serverchat\server.cpp(202): warning C4101: 'tmpSockPtr': unreferenced local variable
-c:\users\jason\documents\github\v1\serverchat\serverchat\server.cpp(253): warning C4101: 'buffer': unreferenced local variable
-c:\users\jason\documents\github\v1\serverchat\serverchat\server.cpp(425): warning C4267: 'argument': conversion from 'size_t' to 'const _Elem', possible loss of data
-          with
-          [
-              _Elem=char
-          ]
-c:\users\jason\documents\github\v1\serverchat\serverchat\server.cpp(516): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-c:\users\jason\documents\github\v1\serverchat\serverchat\server.cpp(508): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+﻿  Server.cpp
+c:\users\tran dinh ton hieu\documents\visual studio 2017\projects\socket_computernetwork\chat_conference\serverchat\serverchat\server.cpp(202): warning C4101: 'tmpSockPtr': unreferenced local variable
+c:\users\tran dinh ton hieu\documents\visual studio 2017\projects\socket_computernetwork\chat_conference\serverchat\serverchat\server.cpp(253): warning C4101: 'buffer': unreferenced local variable
+c:\users\tran dinh ton hieu\documents\visual studio 2017\projects\socket_computernetwork\chat_conference\serverchat\serverchat\server.cpp(530): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+c:\users\tran dinh ton hieu\documents\visual studio 2017\projects\socket_computernetwork\chat_conference\serverchat\serverchat\server.cpp(522): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\stdio.h(208): note: see declaration of 'fopen'
-  ServerChat.cpp
-  ServerChatDlg.cpp
-  Generating Code...
-  ServerChat.vcxproj -> C:\Users\Jason\Documents\GitHub\v1\ServerChat\x64\Debug\ServerChat.exe
+  ServerChat.vcxproj -> C:\Users\Tran Dinh Ton Hieu\Documents\Visual Studio 2017\Projects\SOCKET_COMPUTERNETWORK\chat_conference\ServerChat\x64\Debug\ServerChat.exe
