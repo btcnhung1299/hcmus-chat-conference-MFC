@@ -1,10 +1,18 @@
 #pragma once
 
-
-// CLogin dialog
+enum LoginType { LOGIN, REGISTER };
 
 class CLogin : public CDialog {
 	DECLARE_DYNAMIC(CLogin)
+	public:
+		// Control variables
+		CEdit m_username;
+		CEdit m_password;
+
+		// Value variables
+		int loginOption;
+		CString username;
+		CString password;
 
 	public:
 		CLogin(CWnd* pParent = nullptr);   // standard constructor
@@ -30,13 +38,6 @@ class CLogin : public CDialog {
 		afx_msg void OnBntClickChooseRegister();*/
 		afx_msg void OnBntClickOKLogin();
 		afx_msg void OnBntClickCancelLogin();
-
-		int loginOption;
-		CString username;
-		CString password;
-
-		CEdit m_username;
-		CEdit m_password;
 		afx_msg void OnBtnClickChooseLogin();
 		afx_msg void OnBtnClickChooseRegister();
 };

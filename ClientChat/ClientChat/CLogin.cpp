@@ -6,7 +6,7 @@
 
 IMPLEMENT_DYNAMIC(CLogin, CDialog)
 
-CLogin::CLogin(CWnd* pParent /*=nullptr*/) : CDialog(IDD_Login, pParent), loginOption(0) {
+CLogin::CLogin(CWnd* pParent /*=nullptr*/) : CDialog(IDD_Login, pParent) {
 }
 
 CLogin::~CLogin() {
@@ -17,6 +17,7 @@ void CLogin::DoDataExchange(CDataExchange* pDX) {
 	DDX_Radio(pDX, chooseLogin, loginOption);
 	DDX_Control(pDX, inpUsername, m_username);
 	DDX_Control(pDX, inpPassword, m_password);
+	DDX_Text(pDX, inpUsername, username);
 }
 
 
@@ -37,13 +38,13 @@ void CLogin::OnBntClickOKLogin() {
 }
 
 void CLogin::OnBntClickCancelLogin() {
-	EndDialog(0);
+	EndDialog(btnCancelLogin);
 }
 
 void CLogin::OnBtnClickChooseLogin() {
-	loginOption = 0;
+	loginOption = LoginType::LOGIN;
 }
 
 void CLogin::OnBtnClickChooseRegister() {
-	loginOption = 1;
+	loginOption = LoginType::REGISTER;
 }

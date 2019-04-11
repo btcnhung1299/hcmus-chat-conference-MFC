@@ -2,6 +2,7 @@
 #include "CServerSettings.h"
 #include "CommonLib.h"
 #include "CLogin.h"
+#include "CNoti.h"
 #include <utility>
 #include <afxsock.h>
 
@@ -41,7 +42,7 @@ class CClientChatDoc : public CDocument {
 	public:
 		virtual ~CClientChatDoc();
 		
-		void send(CString msg);
+		void Send(CommonData&);
 		void receive(std::pair<CString, CString>&);
 
 	#ifdef _DEBUG

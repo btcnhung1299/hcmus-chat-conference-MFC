@@ -8,8 +8,7 @@
 
 IMPLEMENT_DYNAMIC(CServerSettings, CDialog)
 
-CServerSettings::CServerSettings(CWnd* pParent /*=nullptr*/) : CDialog(IDD_ServerSettings, pParent)
-{
+CServerSettings::CServerSettings(CWnd* pParent /*=nullptr*/) : CDialog(IDD_ServerSettings, pParent) {
 }
 
 CServerSettings::~CServerSettings() {

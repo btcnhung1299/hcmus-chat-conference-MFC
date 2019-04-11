@@ -33,17 +33,8 @@
 #define IDS_EDIT_MENU                   306
 #define IDD_ServerSettings              312
 #define IDD_Login                       316
-#define inpSendMsg                      1000
-#define titleChatBox                    1001
-#define OutpConversation                1002
-#define btnRefresh                      1003
-#define btnUpload                       1004
-#define btnLeave                        1005
-#define grpConversation                 1006
-#define grpFeatures                     1007
-#define btnSendMsg                      1008
-#define scrollConversation              1012
-#define lstChatBox                      1019
+#define IDD_Noti                        318
+#define IDD_CreateGroup                 320
 #define inpServerIP                     1020
 #define inpServerPort                   1021
 #define btnConnect                      1022
@@ -59,14 +50,21 @@
 #define btnOKLogin                      1032
 #define btnCancelLogin                  1033
 #define grpActionLogin                  1034
+#define btnAcceptNoti                   1035
+#define titleNoti                       1036
+#define tabChatBox                      1040
+#define btnNewTab                       1041
+#define lstUsers                        1045
+#define btnCreateGroup                  1046
+#define btnCancelCreateGroup            1047
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        318
+#define _APS_NEXT_RESOURCE_VALUE        323
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1035
+#define _APS_NEXT_CONTROL_VALUE         1048
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

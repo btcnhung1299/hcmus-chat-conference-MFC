@@ -1,12 +1,10 @@
 #pragma once
-#include "CServerSettings.h"
-#include "CLogin.h"
 
+#include "TabChatBox.h"
 
 class CClientChatView : public CFormView {
 	private:
-		CEdit m_inpSendMsg;
-		CString sendMsg;
+		TabChatBox m_tabChatBox;
 
 	protected: 									// create from serialization only
 		CClientChatView() noexcept;
@@ -45,12 +43,10 @@ class CClientChatView : public CFormView {
 
 	// Generated message map functions
 	protected:
-
+		afx_msg void OnBtnClickNewTab();
 		afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 		afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-		afx_msg void OnBtnClickSendMsg();
 		DECLARE_MESSAGE_MAP()
-
 
 };
 

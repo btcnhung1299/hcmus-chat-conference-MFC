@@ -61,7 +61,7 @@ BOOL CClientChatApp::InitInstance() {
 	// in your application.
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
-
+	AfxInitRichEdit();
 	CWinAppEx::InitInstance();
 
 

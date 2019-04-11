@@ -1,0 +1,42 @@
+﻿Chuẩn CommonData của Client -> Server:
+
+1. Đăng ký tài khoản:
+type = "re"
+message = "<nickname><Mật khẩu>"
+
+-> Nhận mess trả về của Server: 
+	Nếu type = "dup"
+	-> Thông báo bị trùng ID 
+	Nếu type = "suc"
+	-> Thông báo đăng ký thành công
+
+2. Đăng nhập (Log in):
+type = "li"
+from = Port của Client
+message = "<nickname><Mật khẩu>"
+
+-> Nhận mess trả về của Server:
+	Nếu type = "fail"
+	-> Thông báo đăng nhập thất bại
+	Nếu type = "lisuc"
+	-> Thông báo đăng nhập thành công.
+
+3. Tạo nhóm chat: 
+type = "cg"
+message = <ID thành viên 1>\n<ID thành viên 2>\n<ID thành viên 3>\n...\n
+
+-> Nhận mess trả về của Server:
+	type = "cg"
+	message = <ID của Group>
+
+4. Gửi tin nhắn riêng:
+type = "mu"
+from = <Tên người gửi>
+to = <Tên người nhận>
+message = <Tin nhắn của User>
+
+5. Gửi tin nhắn vào nhóm chat:
+type = "mg"
+from = <Tên người gửi>
+to = <ID của nhóm nhận>
+message = <Tin nhắn của User> 

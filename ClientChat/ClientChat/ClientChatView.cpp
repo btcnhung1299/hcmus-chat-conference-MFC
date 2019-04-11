@@ -21,28 +21,23 @@ IMPLEMENT_DYNCREATE(CClientChatView, CFormView)
 BEGIN_MESSAGE_MAP(CClientChatView, CFormView)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
-	ON_BN_CLICKED(btnSendMsg, &CClientChatView::OnBtnClickSendMsg)
+	ON_BN_CLICKED(btnNewTab, &CClientChatView::OnBtnClickNewTab)
 END_MESSAGE_MAP()
 
 // CClientChatView construction/destruction
 
-CClientChatView::CClientChatView() noexcept
+CClientChatView::CClientChatView()
+noexcept
 : CFormView(IDD_MainWnd) {
-	// TODO: add construction code here
-
 }
 
 CClientChatView::~CClientChatView() {
 }
 
-void CClientChatView::OnBtnClickSendMsg() {
-	m_inpSendMsg.GetWindowText(sendMsg);
-	GetDocument()->send(sendMsg);
-}
 
 void CClientChatView::DoDataExchange(CDataExchange* pDX) {
 	CFormView::DoDataExchange(pDX);
-	DDX_Control(pDX, inpSendMsg, m_inpSendMsg);
+	DDX_Control(pDX, tabChatBox, m_tabChatBox);
 }
 
 BOOL CClientChatView::PreCreateWindow(CREATESTRUCT& cs) {
@@ -57,9 +52,9 @@ void CClientChatView::OnInitialUpdate() {
 	GetParentFrame()->RecalcLayout();
 	ResizeParentToFit();
 	
-	if (!AfxBeginThread(ThreadUpdateConversation, reinterpret_cast<LPVOID>(this), THREAD_PRIORITY_NORMAL, 0, 0, NULL)) {
+	/*if (!AfxBeginThread(ThreadUpdateConversation, reinterpret_cast<LPVOID>(this), THREAD_PRIORITY_NORMAL, 0, 0, NULL)) {
 		AfxMessageBox(L"Failed creating thread");
-	}
+	}*/
 }
 
 UINT CClientChatView::ThreadUpdateConversation(LPVOID Param) {
@@ -110,3 +105,12 @@ CClientChatDoc* CClientChatView::GetDocument() const {
 #endif //_DEBUG
 
 
+
+
+void CClientChatView::OnBtnClickNewTab() {
+	m_tabChatBox.ShowWindow(SW_SHOW);
+	CommonData newGroupInfo;
+	if (m_tabChatBox.CreateNewGroup(newGroupInfo)) {
+		GetDocument()->Send(newGroupInfo);
+	}
+}
