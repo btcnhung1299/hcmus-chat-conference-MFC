@@ -1,3 +1,7 @@
 
 *.db
 *.opendb
+*.log
+ServerChat/.vs/ServerChat/v15/.suo
+ServerChat/ServerChat/x64/Debug/ServerChat.log
+*.log
