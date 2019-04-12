@@ -52,16 +52,15 @@ void CClientChatView::OnInitialUpdate() {
 	for (int i = 0; i < MAX_CB; i++) {
 		chatBox[i] = new CChatBox();
 		chatBox[i]->Create(IDD_ChatBox, this);
+		
+		CString tmpGroupID;
+		tmpGroupID.Format(L"%d", i);
+		chatBox[i]->SetTitle(tmpGroupID);
+
 		chatBoxOccupied[i] = false;
 	}
 
 	tabItem.mask = TCIF_TEXT;
-	/*tabItem.pszText = _T("  CB1   ");
-	m_tabChatBox.InsertItem(0, &tabItem);
-	tabItem.pszText = _T("  CB2   ");
-	m_tabChatBox.InsertItem(1, &tabItem);*/
-
-	//ShowWindowNumber(0);
 
 	/*if (!AfxBeginThread(ThreadUpdateOnlineUsers, reinterpret_cast<LPVOID>(this), THREAD_PRIORITY_NORMAL, 0, 0, NULL)) {
 		AfxMessageBox(L"Failed creating thread to update online users");
@@ -164,8 +163,6 @@ void CClientChatView::OpenChatBox(CString chatBoxID) {
 	}
 
 	ShowTabNumber(openID);
-	AfxMessageBox(L"Heereeee");
-	ShowTabNumber(0);
 }
 
 void CClientChatView::ShowTabNumber(int count) {
@@ -185,7 +182,6 @@ void CClientChatView::ShowTabNumber(int count) {
 		chatBox[i]->ShowWindow(SW_SHOW);
 		m_tabChatBox.SetCurSel(count);
 		chatBoxOccupied[count] = true;
-		break;
 	}
 }
 
