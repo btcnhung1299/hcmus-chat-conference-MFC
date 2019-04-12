@@ -18,3 +18,4 @@ ClientChat/.vs/ClientChat/v15/.suo
 *.log
 *.obj
 *.pch
+*.ipch
