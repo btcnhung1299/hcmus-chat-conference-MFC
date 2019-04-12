@@ -64,8 +64,12 @@ CClientChatDoc::CClientChatDoc() noexcept {
 		loginOption = loginDlg.GetLoginOption();
 		CT2CA bufferUsername(username, CP_UTF8);
 		CT2CA bufferPassword(loginDlg.GetPassword(), CP_UTF8);
+		
+		InitListenerConv();
+		CString sockAddr;
+		listenerConv.GetSockName(sockAddr, receivePort);
 
-		loginInfo.from = std::to_string(contactPort);
+		loginInfo.from = std::to_string(receivePort);
 		loginInfo.type = (loginOption == LoginType::LOGIN ? "li" : "re");
 		loginInfo.fileSize = username.GetLength();
 		loginInfo.message = std::string(bufferUsername) + std::string(bufferPassword);

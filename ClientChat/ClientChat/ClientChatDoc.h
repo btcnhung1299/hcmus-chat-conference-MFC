@@ -26,7 +26,7 @@ class CClientChatDoc : public CDocument {
 	public:
 
 	// Operations
-	public:
+protected:
 		void InitListenerConv();
 		void InitListenerUser();
 

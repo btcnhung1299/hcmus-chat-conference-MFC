@@ -71,7 +71,7 @@ void CClientChatView::OnInitialUpdate() {
 // ------------------------- THREADS --------------------------------
 UINT CClientChatView::ThreadUpdateOnlineUsers(LPVOID Param) {
 	CClientChatView *pThis = reinterpret_cast<CClientChatView *>(Param);
-	pThis->GetDocument()->InitListenerUser();
+//	pThis->GetDocument()->InitListenerUser();
 	BOOL end = false;
 
 	while (!end) {
@@ -89,7 +89,7 @@ UINT CClientChatView::UpdateOnlineUsersOnView() {
 
 UINT CClientChatView::ThreadUpdateConversation(LPVOID Param) {
 	CClientChatView *pThis = reinterpret_cast<CClientChatView *>(Param);
-	pThis->GetDocument()->InitListenerConv();
+//	pThis->GetDocument()->InitListenerConv();
 	BOOL end = false;
 	
 	while (!end) {
