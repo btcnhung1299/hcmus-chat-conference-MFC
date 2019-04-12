@@ -23,10 +23,11 @@ void CChatBox::DoDataExchange(CDataExchange* pDX) {
 }
 
 BEGIN_MESSAGE_MAP(CChatBox, CDialog)
-	ON_BN_CLICKED(btnSendMsg, &CChatBox::OnBntClickSendMsg)
+	ON_BN_CLICKED(btnSendMsg, &CChatBox::OnBtnClickSendMsg)
+	ON_BN_CLICKED(btnUpload, &CChatBox::OnBtnClickUpload)
 END_MESSAGE_MAP()
 
-void CChatBox::OnBntClickSendMsg() {
+void CChatBox::OnBtnClickSendMsg() {
 	CString bufferMsg;
 	m_inputMsg.GetWindowText(bufferMsg);
 
@@ -57,4 +58,26 @@ void CChatBox::DisplayNewMsg(CommonData& newMsg) {
 	userFormat.dwEffects = CFE_BOLD;
 	m_outputConversation.SetSel(curPos, curPos + userFrom.GetLength() + 1);
 	m_outputConversation.SetSelectionCharFormat(userFormat);
+}
+
+void CChatBox::OnBtnClickUpload() {
+	CFileDialog fileDlg(TRUE, NULL, NULL, OFN_FILEMUSTEXIST, NULL, this);
+	fileDlg.m_pOFN->lpstrTitle = _T("Choose file...");
+	
+	CommonData fileInfo, response;
+	CString fileName, pathName;
+
+	if (fileDlg.DoModal() == IDOK) {
+		fileName = fileDlg.GetFileName();
+		fileInfo.type = (type == BoxType::CHAT_DIRECT ? "fu" : "fg");
+		fileInfo.message = std::string(CT2CA(fileName, CP_UTF8));
+		
+		// If file metadata received by server, send actual file
+		if (p_Document->Send(fileInfo, response)) {
+			pathName = fileDlg.GetPathName();
+
+			//FILE *fopen
+		}
+
+	}
 }

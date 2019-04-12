@@ -167,6 +167,12 @@ BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 	if (dataSend.type == "cg") {
 		res = (dataResponse.type == "cg" ? true : false);
 	}
+	else if (dataSend.type == "fu") {
+		res = (dataResponse.type == "fu" ? true : false);
+	}
+	else if (dataSend.type == "fg") {
+		res = (dataResponse.type == "fg" ? true : false);
+	}
 
 	return res;
 }

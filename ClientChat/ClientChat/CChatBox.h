@@ -38,7 +38,8 @@ class CChatBox : public CDialog {
 		DECLARE_MESSAGE_MAP()
 
 	public:
-		afx_msg void OnBntClickSendMsg();
+		afx_msg void OnBtnClickSendMsg();
+		afx_msg void OnBtnClickUpload();
 };
 
 
