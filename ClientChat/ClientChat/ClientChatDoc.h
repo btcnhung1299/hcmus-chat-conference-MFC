@@ -19,12 +19,15 @@ class CClientChatDoc : public CDocument {
 		CString username;
 		CString password;
 
+		std::string onlineUsers;
+
 	protected:
 		CClientChatDoc() noexcept;
 		DECLARE_DYNCREATE(CClientChatDoc)
 		virtual ~CClientChatDoc();
 
 	public:
+		std::string GetInitOnlineUsers() { return onlineUsers; }
 		void InitListenerConv();
 		void InitListenerUser();
 

@@ -87,6 +87,7 @@ CClientChatDoc::CClientChatDoc() noexcept {
 		}
 		else {
 			if (response.type == "lisuc") {
+				onlineUsers = response.message;
 				CNoti notiSuccess(NotiType::SUCCESS_LOGIN);
 				notiSuccess.DoModal();
 				loginStatus = true;

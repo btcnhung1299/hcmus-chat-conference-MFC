@@ -36,10 +36,6 @@ void CClientChatView::OnInitialUpdate() {
 	GetParentFrame()->RecalcLayout();
 	ResizeParentToFit();
 
-	//m_lstOnlineUsers.AddString(_T("jason"));
-	//m_lstOnlineUsers.AddString(_T("emma"));
-	//m_lstOnlineUsers.AddString(_T("henry"));
-
 	// Determine size of sub tab
 	CRect tabRect;
 	m_tabChatBox.GetClientRect(&subTabRect);
@@ -57,6 +53,28 @@ void CClientChatView::OnInitialUpdate() {
 	}
 
 	tabItem.mask = TCIF_TEXT;
+
+	// Update users active in the beginning
+	std::string initOnlineUsers = GetDocument()->GetInitOnlineUsers();
+	CString username = GetDocument()->GetUsername();
+	CString bufferOnlineUser;
+
+	int startPos = 0, endPos = 0;
+	for (int i = 1; i < initOnlineUsers.length(); i++) {
+		if (initOnlineUsers[i] == '\n') {
+			endPos = i;
+			bufferOnlineUser = initOnlineUsers.substr(startPos, endPos - startPos).c_str();
+			if (bufferOnlineUser != username) {
+				m_lstOnlineUsers.AddString(bufferOnlineUser);
+			}
+			startPos = endPos + 1;
+		}
+	}
+
+
+	//m_lstOnlineUsers.AddString(_T("jason"));
+	//m_lstOnlineUsers.AddString(_T("emma"));
+	//m_lstOnlineUsers.AddString(_T("henry"));
 
 	/*if (!AfxBeginThread(ThreadUpdateOnlineUsers, reinterpret_cast<LPVOID>(this), THREAD_PRIORITY_NORMAL, 0, 0, NULL)) {
 		AfxMessageBox(L"Failed creating thread to update online users");
