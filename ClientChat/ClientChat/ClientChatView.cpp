@@ -36,9 +36,9 @@ void CClientChatView::OnInitialUpdate() {
 	GetParentFrame()->RecalcLayout();
 	ResizeParentToFit();
 
-	m_lstOnlineUsers.AddString(_T("jason"));
-	m_lstOnlineUsers.AddString(_T("emma"));
-	m_lstOnlineUsers.AddString(_T("henry"));
+	//m_lstOnlineUsers.AddString(_T("jason"));
+	//m_lstOnlineUsers.AddString(_T("emma"));
+	//m_lstOnlineUsers.AddString(_T("henry"));
 
 	// Determine size of sub tab
 	CRect tabRect;
@@ -49,14 +49,10 @@ void CClientChatView::OnInitialUpdate() {
 	subTabRect.OffsetRect(tabRect.left, tabRect.top);
 	subTabRect.top += 20;
 
+	// Create tabs
 	for (int i = 0; i < MAX_CB; i++) {
-		chatBox[i] = new CChatBox();
+		chatBox[i] = new CChatBox(GetDocument(), this);
 		chatBox[i]->Create(IDD_ChatBox, this);
-		
-		CString tmpGroupID;
-		tmpGroupID.Format(L"%d", i);
-		chatBox[i]->SetTitle(tmpGroupID);
-
 		chatBoxOccupied[i] = false;
 	}
 
@@ -69,6 +65,8 @@ void CClientChatView::OnInitialUpdate() {
 	if (!AfxBeginThread(ThreadUpdateConversation, reinterpret_cast<LPVOID>(this), THREAD_PRIORITY_NORMAL, 0, 0, NULL)) {
 		AfxMessageBox(L"Failed creating thread to update conversation");
 	}
+
+
 }
 
 
@@ -130,11 +128,11 @@ void CClientChatView::OnDBClickUser() {
 	CString bufferSelUser;
 	m_lstOnlineUsers.GetText(userIndex, bufferSelUser);
 
-	OpenChatBox(bufferSelUser);
+	OpenChatBox(bufferSelUser, BoxType::CHAT_DIRECT);
 }
 
 // ------------------------- TAB HELPING ----------------------------------------
-void CClientChatView::OpenChatBox(CString chatBoxID) {
+void CClientChatView::OpenChatBox(CString chatBoxID, BoxType boxType) {
 	ChatBoxType type = NEW_TAB;
 	int openID = -1, availableNewTab = -1;
 
@@ -156,6 +154,7 @@ void CClientChatView::OpenChatBox(CString chatBoxID) {
 
 	if (type != TAB_EXISTED) {
 		chatBox[availableNewTab]->SetTitle(chatBoxID);
+		chatBox[availableNewTab]->SetType(boxType);
 		tabItem.pszText = (LPWSTR)(LPCWSTR)(chatBoxID);
 		m_tabChatBox.InsertItem(availableNewTab, &tabItem);
 
@@ -185,6 +184,42 @@ void CClientChatView::ShowTabNumber(int count) {
 	}
 }
 
+void CClientChatView::UpdateChatBox(CommonData newMsg) {
+	CString chatBoxID = CString(newMsg.to.c_str());
+	ChatBoxType type = NEW_TAB;
+	int openID = -1, availableNewTab = -1;
+
+	for (int i = 0; i < MAX_CB; i++) {
+		CString temp = chatBox[i]->GetTitle();
+		if (chatBoxOccupied[i]) {
+			if (chatBox[i]->GetTitle() == chatBoxID) {
+				type = TAB_EXISTED;
+				openID = i;
+				break;
+			}
+		}
+		else {
+			if (availableNewTab == -1) {
+				availableNewTab = i;
+			}
+		}
+	}
+
+	if (type != TAB_EXISTED) {
+		chatBox[availableNewTab]->SetTitle(chatBoxID);
+		chatBox[availableNewTab]->SetType(BoxType::CHAT_DIRECT);
+		tabItem.pszText = (LPWSTR)(LPCWSTR)(chatBoxID);
+		m_tabChatBox.InsertItem(availableNewTab, &tabItem);
+		openID = availableNewTab;
+	}
+
+	chatBox[openID]->DisplayNewMsg(newMsg);
+}
+
+void CClientChatView::OnSelChangeTabChatBox(NMHDR *pNMHDR, LRESULT *pResult) {
+	ShowTabNumber(m_tabChatBox.GetCurFocus());
+	*pResult = 0;
+}
 
 // ------------------------- THREADS --------------------------------
 UINT CClientChatView::ThreadUpdateOnlineUsers(LPVOID Param) {
@@ -222,7 +257,10 @@ void CClientChatView::UpdateConversationOnView() {
 	
 	if (response.type == "cg") {
 		CString chatBoxID = CString(response.message.c_str());
-		OpenChatBox(chatBoxID);
+		OpenChatBox(chatBoxID, BoxType::CHAT_GROUP);
+	}
+	else if (response.type == "mu" || response.type == "mg") {
+		UpdateChatBox(response);
 	}
 }
 
@@ -246,7 +284,3 @@ CClientChatDoc* CClientChatView::GetDocument() const {
 }
 #endif //_DEBUG
 
-void CClientChatView::OnSelChangeTabChatBox(NMHDR *pNMHDR, LRESULT *pResult) {
-	ShowTabNumber(m_tabChatBox.GetCurFocus());
-	*pResult = 0;
-}

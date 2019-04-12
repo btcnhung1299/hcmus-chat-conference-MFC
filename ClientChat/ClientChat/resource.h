@@ -42,7 +42,10 @@
 #define titleServerIP                   1024
 #define titleServerPort                 1025
 #define inpUsername                     1026
+#define titleServerPort2                1026
+#define titleYourPort                   1026
 #define inpPassword                     1027
+#define inpYourPort                     1027
 #define chooseLogin                     1028
 #define chooseRegister                  1029
 #define titleUsername                   1030

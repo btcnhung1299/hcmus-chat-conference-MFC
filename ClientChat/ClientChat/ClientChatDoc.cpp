@@ -34,6 +34,7 @@ CClientChatDoc::CClientChatDoc() noexcept {
 	while (!connected && serverSettingsDlg.DoModal() == btnConnect) {
 		serverPort = serverSettingsDlg.GetServerPort();
 		serverIP = serverSettingsDlg.GetServerIP();
+		myPort = serverSettingsDlg.GetMyPort();
 		if (clntSock.Connect(serverIP, serverPort)) {
 			connected = true;
 			clntSock.Receive(&contactPort, 4, 0);

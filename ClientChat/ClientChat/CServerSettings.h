@@ -3,12 +3,21 @@
 
 class CServerSettings : public CDialog {
 	DECLARE_DYNAMIC(CServerSettings)
+	private:
+		CIPAddressCtrl m_serverIP;
+		CEdit m_serverPort;
+		CEdit m_myPort;
+
+		UINT serverPort;
+		UINT myPort;
+		CString serverIP;
 
 	public:
 		CServerSettings(CWnd* pParent = nullptr);   // standard constructor
 		virtual ~CServerSettings();
 		
 		UINT GetServerPort();
+		UINT GetMyPort();
 		CString GetServerIP();
 
 	// Dialog Data
@@ -21,11 +30,4 @@ class CServerSettings : public CDialog {
 		afx_msg void OnBtnClickCancel();
 		afx_msg void OnBtnClickConnect();
 		DECLARE_MESSAGE_MAP()
-
-	private:
-		CIPAddressCtrl m_serverIP;
-		CEdit m_serverPort;
-
-		UINT serverPort;
-		CString serverIP;
 };

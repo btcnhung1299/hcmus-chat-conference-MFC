@@ -1,7 +1,8 @@
 ﻿  Server.cpp
-c:\users\tran dinh ton hieu\documents\visual studio 2017\projects\socket_computernetwork\chat_conference\serverchat\serverchat\server.cpp(202): warning C4101: 'tmpSockPtr': unreferenced local variable
-c:\users\tran dinh ton hieu\documents\visual studio 2017\projects\socket_computernetwork\chat_conference\serverchat\serverchat\server.cpp(253): warning C4101: 'buffer': unreferenced local variable
-c:\users\tran dinh ton hieu\documents\visual studio 2017\projects\socket_computernetwork\chat_conference\serverchat\serverchat\server.cpp(530): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-c:\users\tran dinh ton hieu\documents\visual studio 2017\projects\socket_computernetwork\chat_conference\serverchat\serverchat\server.cpp(522): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\users\jason\documents\github\serverchat\serverchat\server.cpp(281): warning C4101: 'tmpSockPtr': unreferenced local variable
+c:\users\jason\documents\github\serverchat\serverchat\server.cpp(332): warning C4101: 'buffer': unreferenced local variable
+c:\users\jason\documents\github\serverchat\serverchat\server.cpp(506): warning C4101: 'c': unreferenced local variable
+c:\users\jason\documents\github\serverchat\serverchat\server.cpp(629): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+c:\users\jason\documents\github\serverchat\serverchat\server.cpp(621): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\stdio.h(208): note: see declaration of 'fopen'
-  ServerChat.vcxproj -> C:\Users\Tran Dinh Ton Hieu\Documents\Visual Studio 2017\Projects\SOCKET_COMPUTERNETWORK\chat_conference\ServerChat\x64\Debug\ServerChat.exe
+  ServerChat.vcxproj -> C:\Users\Jason\Documents\GitHub\ServerChat\x64\Debug\ServerChat.exe

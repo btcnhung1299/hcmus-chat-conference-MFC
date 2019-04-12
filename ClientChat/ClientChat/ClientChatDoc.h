@@ -1,4 +1,5 @@
 #pragma once
+
 #include "CServerSettings.h"
 #include "CommonLib.h"
 #include "CLogin.h"
@@ -18,19 +19,15 @@ class CClientChatDoc : public CDocument {
 		CString username;
 		CString password;
 
-	protected: 						// create from serialization only
+	protected:
 		CClientChatDoc() noexcept;
 		DECLARE_DYNCREATE(CClientChatDoc)
+		virtual ~CClientChatDoc();
 
-	// Attributes
-	public:
-
-	// Operations
 	public:
 		void InitListenerConv();
 		void InitListenerUser();
 
-	// Overrides
 	public:
 		virtual BOOL OnNewDocument();
 		virtual void Serialize(CArchive& ar);
@@ -39,10 +36,8 @@ class CClientChatDoc : public CDocument {
 		virtual void OnDrawThumbnail(CDC& dc, LPRECT lprcBounds);
 	#endif // SHARED_HANDLERS
 
-	// Implementation
 	public:
-		virtual ~CClientChatDoc();
-		
+		CString GetUsername() { return username; }
 		BOOL Send(CommonData&, CommonData&);
 		void ReceiveConv(CommonData& receiveData);
 		void ReceiveUser();
@@ -65,3 +60,4 @@ class CClientChatDoc : public CDocument {
 		void SetSearchContent(const CString& value);
 	#endif // SHARED_HANDLERS
 };
+

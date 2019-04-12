@@ -2,6 +2,7 @@
 
 #include "CChatBox.h"
 #define MAX_CB 5
+
 enum ChatBoxType { TAB_EXISTED, NEW_TAB };
 
 class CClientChatView : public CFormView {
@@ -18,6 +19,7 @@ class CClientChatView : public CFormView {
 
 	protected: 
 		CClientChatView() noexcept;
+		virtual ~CClientChatView();
 		DECLARE_DYNCREATE(CClientChatView)
 
 	public:
@@ -29,7 +31,8 @@ class CClientChatView : public CFormView {
 		CClientChatDoc* GetDocument() const;
 
 	public:
-		void OpenChatBox(CString chatBoxID);
+		void OpenChatBox(CString chatBoxID, BoxType type);
+		void UpdateChatBox(CommonData);
 		void ShowTabNumber(int count);
 		void UpdateOnlineUsersOnView();
 		void UpdateConversationOnView();
@@ -40,11 +43,10 @@ class CClientChatView : public CFormView {
 		virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 
 	protected:
-		virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-		virtual void OnInitialUpdate(); 		// called first time after construct
+		virtual void DoDataExchange(CDataExchange* pDX);
+		virtual void OnInitialUpdate();
+		
 
-	public:
-		virtual ~CClientChatView();
 	#ifdef _DEBUG
 		virtual void AssertValid() const;
 		virtual void Dump(CDumpContext& dc) const;
@@ -62,8 +64,8 @@ class CClientChatView : public CFormView {
 		DECLARE_MESSAGE_MAP()
 };
 
+
 #ifndef _DEBUG
 inline CClientChatDoc* CClientChatView::GetDocument() const
    { return reinterpret_cast<CClientChatDoc*>(m_pDocument); }
 #endif
-
