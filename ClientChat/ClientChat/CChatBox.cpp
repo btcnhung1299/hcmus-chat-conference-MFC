@@ -65,19 +65,17 @@ void CChatBox::OnBtnClickUpload() {
 	fileDlg.m_pOFN->lpstrTitle = _T("Choose file...");
 	
 	CommonData fileInfo, response;
-	CString fileName, pathName;
+	CString pathName;
 
 	if (fileDlg.DoModal() == IDOK) {
-		fileName = fileDlg.GetFileName();
+		pathName = fileDlg.GetPathName();
 		fileInfo.type = (type == BoxType::CHAT_DIRECT ? "fu" : "fg");
-		fileInfo.message = std::string(CT2CA(fileName, CP_UTF8));
+		fileInfo.message = std::string(CT2CA(pathName, CP_UTF8));
+		fileInfo.to = std::string(CT2CA(titleCB, CP_UTF8));
 		
 		// If file metadata received by server, send actual file
 		if (p_Document->Send(fileInfo, response)) {
-			pathName = fileDlg.GetPathName();
-
-			//FILE *fopen
+			AfxMessageBox(L"Send!!");
 		}
-
 	}
 }

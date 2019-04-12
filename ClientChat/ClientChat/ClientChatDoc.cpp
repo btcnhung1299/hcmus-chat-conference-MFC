@@ -157,23 +157,49 @@ BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 		AfxMessageBox(L"Can't connect to contace port provided");
 	}
 
+	std::string tmpFilePath;
 	CT2CA bufferUsername(username, CP_UTF8);
 	dataSend.from = std::string(bufferUsername);
+
+	if (dataSend.type == "fu" || dataSend.type == "fg") {
+		tmpFilePath = dataSend.message;
+		int deli = tmpFilePath.find_last_of("/\\");
+		dataSend.message = tmpFilePath.substr(deli + 1);
+	}
+		
 	SendCommonData(clntSock, dataSend);
 	ReceiveCommonData(clntSock, dataResponse);
-	clntSock.Close();
 
 	BOOL res = false;
 	if (dataSend.type == "cg") {
 		res = (dataResponse.type == "cg" ? true : false);
 	}
-	else if (dataSend.type == "fu") {
-		res = (dataResponse.type == "fu" ? true : false);
-	}
-	else if (dataSend.type == "fg") {
-		res = (dataResponse.type == "fg" ? true : false);
+	else if (dataSend.type == "fu" || dataSend.type == "fg") {
+		res = ((dataResponse.type == "fu" || dataResponse.type == "fg") ? true : false);
+		if (res) {
+			FILE *fp = fopen(tmpFilePath.data(), "rb");
+			char buffer[FILE_BUFFER_SIZE];
+			int byteRead = 0;
+
+			if (fp == NULL) {
+				AfxMessageBox(L"File not found!");
+				res = false;
+			}
+			else {
+				do {
+					byteRead = fread(buffer, 1, FILE_BUFFER_SIZE, fp);
+					clntSock.Send(&byteRead, sizeof(int), 0);
+					if (clntSock.Send(buffer, byteRead) != byteRead) {
+						AfxMessageBox(L"loss");
+					}
+				} while (byteRead == FILE_BUFFER_SIZE);
+
+				fclose(fp);
+			}
+		}
 	}
 
+	clntSock.Close();
 	return res;
 }
 
