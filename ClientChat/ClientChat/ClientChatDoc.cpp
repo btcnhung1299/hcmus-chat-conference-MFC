@@ -13,8 +13,6 @@
 #define new DEBUG_NEW
 #endif
 
-// CClientChatDoc
-
 IMPLEMENT_DYNCREATE(CClientChatDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CClientChatDoc, CDocument)
@@ -31,6 +29,7 @@ CClientChatDoc::CClientChatDoc() noexcept {
 
 	CServerSettings serverSettingsDlg;
 	BOOL connected = false;
+	myPort = 7;
 
 	while (!connected && serverSettingsDlg.DoModal() == btnConnect) {
 		serverPort = serverSettingsDlg.GetServerPort();
@@ -46,9 +45,8 @@ CClientChatDoc::CClientChatDoc() noexcept {
 	CLogin loginDlg;
 
 	CommonData loginInfo, response;
-	int loginOption = 0;
-	
 	BOOL loginStatus = false;
+	int loginOption = 0;
 
 	while (!loginStatus) {
 		if (loginDlg.DoModal() == btnCancelLogin) {
@@ -64,12 +62,8 @@ CClientChatDoc::CClientChatDoc() noexcept {
 		loginOption = loginDlg.GetLoginOption();
 		CT2CA bufferUsername(username, CP_UTF8);
 		CT2CA bufferPassword(loginDlg.GetPassword(), CP_UTF8);
-		
-		InitListenerConv();
-		CString sockAddr;
-		listenerConv.GetSockName(sockAddr, receivePort);
 
-		loginInfo.from = std::to_string(receivePort);
+		loginInfo.from = std::to_string(myPort);
 		loginInfo.type = (loginOption == LoginType::LOGIN ? "li" : "re");
 		loginInfo.fileSize = username.GetLength();
 		loginInfo.message = std::string(bufferUsername) + std::string(bufferPassword);
@@ -150,18 +144,18 @@ BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 	dataSend.from = std::string(bufferUsername);
 	SendCommonData(clntSock, dataSend);
 	ReceiveCommonData(clntSock, dataResponse);
+	clntSock.Close();
 
 	BOOL res = false;
 	if (dataSend.type == "cg") {
 		res = (dataResponse.type == "cg" ? true : false);
 	}
 
-	clntSock.Close();
 	return res;
 }
 
 void CClientChatDoc::InitListenerConv() {
-	if (!listenerConv.Create()) {
+	if (!listenerConv.Create(myPort)) {
 		AfxMessageBox(L"Can't create listener");
 	}
 }
@@ -172,27 +166,14 @@ void CClientChatDoc::InitListenerUser() {
 	}
 }
 
-void CClientChatDoc::ReceiveConv(std::pair<CString, CString>& msg) {
-	int len;
-	char bufferFrom[256];
-	char bufferContent[256];
-
+void CClientChatDoc::ReceiveConv(CommonData& receiveData) {
 	if (!listenerConv.Listen()) {
 		AfxMessageBox(L"Can't listen");
 	}
+
 	listenerConv.Accept(receiverConv);
-
-	AfxMessageBox(L"Connect");
-
-	receiverConv.Receive(&len, 4, 0);
-	receiverConv.Receive(&bufferFrom, len, 0);
-	bufferFrom[len] = '\0';
-
-	receiverConv.Receive(&len, 4, 0);
-	receiverConv.Receive(&bufferContent, len, 0);
-	bufferContent[len] = '\0';
-		
-	msg = std::make_pair(CString(bufferFrom), CString(bufferContent));
+	ReceiveCommonData(receiverConv, receiveData);
+	receiverConv.Close();
 }
 
 void CClientChatDoc::ReceiveUser() {

@@ -13,7 +13,7 @@ class CClientChatDoc : public CDocument {
 		UINT serverPort;
 		CString serverIP;
 		UINT contactPort;
-		UINT receivePort;
+		UINT myPort;
 
 		CString username;
 		CString password;
@@ -26,7 +26,7 @@ class CClientChatDoc : public CDocument {
 	public:
 
 	// Operations
-protected:
+	public:
 		void InitListenerConv();
 		void InitListenerUser();
 
@@ -44,7 +44,7 @@ protected:
 		virtual ~CClientChatDoc();
 		
 		BOOL Send(CommonData&, CommonData&);
-		void ReceiveConv(std::pair<CString, CString>&);
+		void ReceiveConv(CommonData& receiveData);
 		void ReceiveUser();
 
 	#ifdef _DEBUG

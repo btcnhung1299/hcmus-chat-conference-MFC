@@ -45,6 +45,9 @@
     <ClInclude Include="CNoti.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CChatBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClientChat.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CNoti.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CChatBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

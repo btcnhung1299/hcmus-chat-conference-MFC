@@ -13,31 +13,15 @@
 #define new DEBUG_NEW
 #endif
 
-
-// CClientChatView
-
 IMPLEMENT_DYNCREATE(CClientChatView, CFormView)
 
-BEGIN_MESSAGE_MAP(CClientChatView, CFormView)
-	ON_WM_CONTEXTMENU()
-	ON_WM_RBUTTONUP()
-	ON_BN_CLICKED(btnCreateNewGroup, &CClientChatView::OnBtnClickCreateGroup)
-END_MESSAGE_MAP()
-
-// CClientChatView construction/destruction
-
+// ------------------------- CONSTRUCTOR / DESTRUCTOR --------------------------
 CClientChatView::CClientChatView()
 noexcept
 : CFormView(IDD_MainWnd) {
 }
 
 CClientChatView::~CClientChatView() {
-}
-
-
-void CClientChatView::DoDataExchange(CDataExchange* pDX) {
-	CFormView::DoDataExchange(pDX);
-	DDX_Control(pDX, lstOnlineUsers, m_lstOnlineUsers);
 }
 
 BOOL CClientChatView::PreCreateWindow(CREATESTRUCT& cs) {
@@ -55,57 +39,56 @@ void CClientChatView::OnInitialUpdate() {
 	m_lstOnlineUsers.AddString(_T("jason"));
 	m_lstOnlineUsers.AddString(_T("emma"));
 	m_lstOnlineUsers.AddString(_T("henry"));
-	m_lstOnlineUsers.AddString(_T("damien"));
-	m_lstOnlineUsers.AddString(_T("lara"));
+
+	// Determine size of sub tab
+	CRect tabRect;
+	m_tabChatBox.GetClientRect(&subTabRect);
+	m_tabChatBox.AdjustRect(FALSE, &subTabRect);
+	m_tabChatBox.GetWindowRect(&tabRect);
+	ScreenToClient(tabRect);
+	subTabRect.OffsetRect(tabRect.left, tabRect.top);
+	subTabRect.top += 20;
+
+	for (int i = 0; i < MAX_CB; i++) {
+		chatBox[i] = new CChatBox();
+		chatBox[i]->Create(IDD_ChatBox, this);
+		chatBoxOccupied[i] = false;
+	}
+
+	tabItem.mask = TCIF_TEXT;
+	/*tabItem.pszText = _T("  CB1   ");
+	m_tabChatBox.InsertItem(0, &tabItem);
+	tabItem.pszText = _T("  CB2   ");
+	m_tabChatBox.InsertItem(1, &tabItem);*/
+
+	//ShowWindowNumber(0);
 
 	/*if (!AfxBeginThread(ThreadUpdateOnlineUsers, reinterpret_cast<LPVOID>(this), THREAD_PRIORITY_NORMAL, 0, 0, NULL)) {
 		AfxMessageBox(L"Failed creating thread to update online users");
 	}
-	
+	*/
 	if (!AfxBeginThread(ThreadUpdateConversation, reinterpret_cast<LPVOID>(this), THREAD_PRIORITY_NORMAL, 0, 0, NULL)) {
 		AfxMessageBox(L"Failed creating thread to update conversation");
-	}*/
-}
-
-
-// ------------------------- THREADS --------------------------------
-UINT CClientChatView::ThreadUpdateOnlineUsers(LPVOID Param) {
-	CClientChatView *pThis = reinterpret_cast<CClientChatView *>(Param);
-//	pThis->GetDocument()->InitListenerUser();
-	BOOL end = false;
-
-	while (!end) {
-
 	}
-	return 0;
 }
 
-UINT CClientChatView::UpdateOnlineUsersOnView() {
-	//std::pair<CString, CString> msg;
-	//GetDocument()->Receive(msg);
-	//AfxMessageBox(L"abc");
-	return 0;
+
+// ------------------------- MESSAGE MAPPING ------------------------------------
+BEGIN_MESSAGE_MAP(CClientChatView, CFormView)
+	ON_WM_CONTEXTMENU()
+	ON_WM_RBUTTONUP()
+	ON_BN_CLICKED(btnCreateNewGroup, &CClientChatView::OnBtnClickCreateGroup)
+	ON_LBN_DBLCLK(lstOnlineUsers, &CClientChatView::OnDBClickUser)
+	ON_NOTIFY(TCN_SELCHANGE, tabChatBox, &CClientChatView::OnSelChangeTabChatBox)
+END_MESSAGE_MAP()
+
+void CClientChatView::DoDataExchange(CDataExchange* pDX) {
+	CFormView::DoDataExchange(pDX);
+	DDX_Control(pDX, lstOnlineUsers, m_lstOnlineUsers);
+	DDX_Control(pDX, tabChatBox, m_tabChatBox);
 }
 
-UINT CClientChatView::ThreadUpdateConversation(LPVOID Param) {
-	CClientChatView *pThis = reinterpret_cast<CClientChatView *>(Param);
-//	pThis->GetDocument()->InitListenerConv();
-	BOOL end = false;
-	
-	while (!end) {
-		//pThis->UpdateConversation();
-	}
-	return 0;
-}
-
-UINT CClientChatView::UpdateConversationOnView() {
-	//std::pair<CString, CString> msg;
-	//GetDocument()->Receive(msg);
-	//AfxMessageBox(L"abc");
-	return 0;
-}
-
-// --------------------- EVENT HANDLERS ---------------------------
+// ------------------------- EVENT HANDLERS -------------------------------------
 void CClientChatView::OnRButtonUp(UINT /* nFlags */, CPoint point) {
 	ClientToScreen(&point);
 	OnContextMenu(this, point);
@@ -134,18 +117,123 @@ void CClientChatView::OnBtnClickCreateGroup() {
 	}
 
 	CommonData serverResponse;
-	CString newGroupID;
 	if (GetDocument()->Send(newGroupInfo, serverResponse)) {
-		AfxMessageBox(L"Create group successfully");
-		newGroupID = CString(serverResponse.message.c_str());
+		CNoti notiSuccess(NotiType::SUCCESS_GROUP);
+		notiSuccess.DoModal();
 	}
 	else {
 		AfxMessageBox(L"Fail creating new group");
 	}
 }
 
+void CClientChatView::OnDBClickUser() {
+	int userIndex = m_lstOnlineUsers.GetCurSel();
+	CString bufferSelUser;
+	m_lstOnlineUsers.GetText(userIndex, bufferSelUser);
 
-// CClientChatView diagnostics
+	OpenChatBox(bufferSelUser);
+}
+
+// ------------------------- TAB HELPING ----------------------------------------
+void CClientChatView::OpenChatBox(CString chatBoxID) {
+	ChatBoxType type = NEW_TAB;
+	int openID = -1, availableNewTab = -1;
+
+	for (int i = 0; i < MAX_CB; i++) {
+		CString temp = chatBox[i]->GetTitle();
+		if (chatBoxOccupied[i]) {
+			if (chatBox[i]->GetTitle() == chatBoxID) {
+				type = TAB_EXISTED;
+				openID = i;
+				break;
+			}
+		}
+		else {
+			if (availableNewTab == -1) {
+				availableNewTab = i;
+			}
+		}
+	}
+
+	if (type != TAB_EXISTED) {
+		chatBox[availableNewTab]->SetTitle(chatBoxID);
+		tabItem.pszText = (LPWSTR)(LPCWSTR)(chatBoxID);
+		m_tabChatBox.InsertItem(availableNewTab, &tabItem);
+
+		openID = availableNewTab;
+	}
+
+	ShowTabNumber(openID);
+	AfxMessageBox(L"Heereeee");
+	ShowTabNumber(0);
+}
+
+void CClientChatView::ShowTabNumber(int count) {
+	/*CChatBox *m_subChatBox[MAX_CB];
+	for (int i = 0; i < MAX_CB; i++) {
+		m_subChatBox[i] = &chatBox[i];
+
+	}*/
+	
+	for (int i = 0; i < MAX_CB; i++) {
+		if (i != count) {
+			chatBox[i]->ShowWindow(SW_HIDE);
+			continue;
+		}
+
+		chatBox[i]->MoveWindow(&subTabRect);
+		chatBox[i]->ShowWindow(SW_SHOW);
+		m_tabChatBox.SetCurSel(count);
+		chatBoxOccupied[count] = true;
+		break;
+	}
+}
+
+
+// ------------------------- THREADS --------------------------------
+UINT CClientChatView::ThreadUpdateOnlineUsers(LPVOID Param) {
+	CClientChatView *pThis = reinterpret_cast<CClientChatView *>(Param);
+	pThis->GetDocument()->InitListenerUser();
+	BOOL end = false;
+
+	while (!end) {
+
+	}
+	return 0;
+}
+
+void CClientChatView::UpdateOnlineUsersOnView() {
+	//std::pair<CString, CString> msg;
+	//GetDocument()->Receive(msg);
+	//AfxMessageBox(L"abc");
+}
+
+UINT CClientChatView::ThreadUpdateConversation(LPVOID Param) {
+	CClientChatView *pThis = reinterpret_cast<CClientChatView *>(Param);
+	pThis->GetDocument()->InitListenerConv();
+	BOOL end = false;
+	
+	while (!end) {
+		pThis->UpdateConversationOnView();
+	}
+
+	return 0;
+}
+
+void CClientChatView::UpdateConversationOnView() {
+	CommonData response;
+	GetDocument()->ReceiveConv(response);
+	
+	if (response.type == "cg") {
+		CString chatBoxID = CString(response.message.c_str());
+		OpenChatBox(chatBoxID);
+	}
+}
+
+
+
+
+
 
 #ifdef _DEBUG
 void CClientChatView::AssertValid() const {
@@ -162,4 +250,7 @@ CClientChatDoc* CClientChatView::GetDocument() const {
 }
 #endif //_DEBUG
 
-
+void CClientChatView::OnSelChangeTabChatBox(NMHDR *pNMHDR, LRESULT *pResult) {
+	ShowTabNumber(m_tabChatBox.GetCurFocus());
+	*pResult = 0;
+}

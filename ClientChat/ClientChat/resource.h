@@ -34,6 +34,7 @@
 #define IDD_ServerSettings              312
 #define IDD_Login                       316
 #define IDD_Noti                        318
+#define IDD_ChatBox                     324
 #define inpServerIP                     1020
 #define inpServerPort                   1021
 #define btnConnect                      1022
@@ -58,14 +59,22 @@
 #define grpOnlineUsers                  1051
 #define IDC_LIST2                       1053
 #define lstOnlineUsers                  1053
+#define outputConversation              1054
+#define inputMsg                        1055
+#define btnUpload                       1058
+#define btnLeave                        1059
+#define titleChatBox                    1060
+#define grpConversation                 1061
+#define grpFeatures                     1062
+#define grpMembers                      1063
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        324
+#define _APS_NEXT_RESOURCE_VALUE        326
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1054
+#define _APS_NEXT_CONTROL_VALUE         1064
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

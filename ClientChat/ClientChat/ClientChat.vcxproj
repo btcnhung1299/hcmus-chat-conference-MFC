@@ -183,6 +183,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CChatBox.h" />
     <ClInclude Include="ClientChat.h" />
     <ClInclude Include="ClientChatDoc.h" />
     <ClInclude Include="ClientChatView.h" />
@@ -195,6 +196,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CChatBox.cpp" />
     <ClCompile Include="ClientChat.cpp" />
     <ClCompile Include="ClientChatDoc.cpp" />
     <ClCompile Include="ClientChatView.cpp" />

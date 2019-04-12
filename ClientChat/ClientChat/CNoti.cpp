@@ -25,7 +25,6 @@ CNoti::CNoti(NotiType type, CWnd* pParent) : CDialog(IDD_Noti, pParent) {
 		case (NotiType::DUPLICATE_REGISTER): {
 			notiContent = _T("Username already exists.");
 			break;
-			/*GetDlgItem(btnAcceptNoti)->SetWindowText(L"Retry");*/
 		}
 		case (NotiType::SUCCESS_LOGIN): {
 			notiContent = _T("Login successful.");
@@ -34,7 +33,10 @@ CNoti::CNoti(NotiType type, CWnd* pParent) : CDialog(IDD_Noti, pParent) {
 		case (NotiType::NOTEXIST_LOGIN): {
 			notiContent = _T("Wrong username/password.");
 			break;
-			/*GetDlgItem(btnAcceptNoti)->SetWindowText(L"Retry");*/
+		}
+		case (NotiType::SUCCESS_GROUP): {
+			notiContent = _T("Create group successfully.");
+			break;
 		}
 		default: notiContent = _T("Not recognized"); break;
 	}
