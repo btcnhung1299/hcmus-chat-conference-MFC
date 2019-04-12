@@ -9,6 +9,7 @@
 
 class CClientChatDoc : public CDocument {
 	private:
+		CSocket mainClntSock;
 		CSocket clntSock, listenerConv, listenerUser, receiverConv, receiverUser;
 
 		UINT serverPort;

@@ -23,18 +23,34 @@ END_MESSAGE_MAP()
 
 CClientChatDoc::CClientChatDoc() noexcept {
 	AfxSocketInit(NULL);
-	if (!clntSock.Create()) {
-		AfxMessageBox(L"Can't create socket");
+	if (!mainClntSock.Create()) {
+		AfxMessageBox(L"Can't create main socket");
+	}
+	CString tmpAddr;
+	mainClntSock.GetSockNameEx(tmpAddr, myPort);
+	mainClntSock.Close();
+
+	BOOL sucCreate = false;
+	UINT tmpPort;
+	while (!sucCreate) {
+		clntSock.Create();
+		clntSock.GetSockNameEx(tmpAddr, tmpPort);
+
+		if (tmpPort == myPort) {
+			clntSock.Close();
+		}
+		else {
+			sucCreate = true;
+		}
 	}
 
 	CServerSettings serverSettingsDlg;
 	BOOL connected = false;
-	myPort = 7;
+	
 
 	while (!connected && serverSettingsDlg.DoModal() == btnConnect) {
 		serverPort = serverSettingsDlg.GetServerPort();
 		serverIP = serverSettingsDlg.GetServerIP();
-		myPort = serverSettingsDlg.GetMyPort();
 		if (clntSock.Connect(serverIP, serverPort)) {
 			connected = true;
 			clntSock.Receive(&contactPort, 4, 0);
@@ -44,7 +60,6 @@ CClientChatDoc::CClientChatDoc() noexcept {
 	clntSock.Close();
 
 	CLogin loginDlg;
-
 	CommonData loginInfo, response;
 	BOOL loginStatus = false;
 	int loginOption = 0;
@@ -157,7 +172,7 @@ BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 }
 
 void CClientChatDoc::InitListenerConv() {
-	if (!listenerConv.Create(myPort)) {
+	if (!mainClntSock.Create(myPort)) {
 		AfxMessageBox(L"Can't create listener");
 	}
 }
@@ -169,11 +184,11 @@ void CClientChatDoc::InitListenerUser() {
 }
 
 void CClientChatDoc::ReceiveConv(CommonData& receiveData) {
-	if (!listenerConv.Listen()) {
+	if (!mainClntSock.Listen()) {
 		AfxMessageBox(L"Can't listen");
 	}
 
-	listenerConv.Accept(receiverConv);
+	mainClntSock.Accept(receiverConv);
 	ReceiveCommonData(receiverConv, receiveData);
 	receiverConv.Close();
 }

@@ -71,15 +71,12 @@ void CClientChatView::OnInitialUpdate() {
 		}
 	}
 
-
-	//m_lstOnlineUsers.AddString(_T("jason"));
-	//m_lstOnlineUsers.AddString(_T("emma"));
-	//m_lstOnlineUsers.AddString(_T("henry"));
-
 	/*if (!AfxBeginThread(ThreadUpdateOnlineUsers, reinterpret_cast<LPVOID>(this), THREAD_PRIORITY_NORMAL, 0, 0, NULL)) {
 		AfxMessageBox(L"Failed creating thread to update online users");
 	}
 	*/
+
+	// Open new thread to update conversation
 	if (!AfxBeginThread(ThreadUpdateConversation, reinterpret_cast<LPVOID>(this), THREAD_PRIORITY_NORMAL, 0, 0, NULL)) {
 		AfxMessageBox(L"Failed creating thread to update conversation");
 	}
@@ -116,11 +113,13 @@ void CClientChatView::OnContextMenu(CWnd* /* pWnd */, CPoint point) {
 }
 
 void CClientChatView::OnBtnClickCreateGroup() {
+	// Get list of selected users in active user list
 	int nSelUsers = m_lstOnlineUsers.GetSelCount();
 	CArray<int, int> idSelUsers;
 	idSelUsers.SetSize(nSelUsers);
 	m_lstOnlineUsers.GetSelItems(nSelUsers, idSelUsers.GetData());
 
+	// Create group protocol: data.type = "cg", data.message = <username1>\n<username2>\n...<usernamen>\n
 	CString bufferSelUsers;
 	CommonData newGroupInfo;
 	newGroupInfo.type = "cg";
@@ -131,6 +130,7 @@ void CClientChatView::OnBtnClickCreateGroup() {
 		newGroupInfo.message += std::string(selUsers) + "\n";
 	}
 
+	// Send create group message to server and get response
 	CommonData serverResponse;
 	if (GetDocument()->Send(newGroupInfo, serverResponse)) {
 		CNoti notiSuccess(NotiType::SUCCESS_GROUP);
@@ -142,10 +142,12 @@ void CClientChatView::OnBtnClickCreateGroup() {
 }
 
 void CClientChatView::OnDBClickUser() {
+	// Get username selected when user double clicked on it
 	int userIndex = m_lstOnlineUsers.GetCurSel();
 	CString bufferSelUser;
 	m_lstOnlineUsers.GetText(userIndex, bufferSelUser);
 
+	// Open chat box with selected user (direct chat box)
 	OpenChatBox(bufferSelUser, BoxType::CHAT_DIRECT);
 }
 
@@ -203,7 +205,17 @@ void CClientChatView::ShowTabNumber(int count) {
 }
 
 void CClientChatView::UpdateChatBox(CommonData newMsg) {
-	CString chatBoxID = CString(newMsg.to.c_str());
+	// Get chatbox ID:
+	// - Message to group: chatbox ID = data.to
+	// - Direct message: chatbox ID = the another's ID
+	CString chatBoxID(newMsg.to.c_str());
+	if (newMsg.type == "mu") {
+		if (chatBoxID == GetDocument()->GetUsername()) {
+			chatBoxID = newMsg.from.c_str();
+		}
+	}
+	
+	int curTab = m_tabChatBox.GetCurSel();
 	ChatBoxType type = NEW_TAB;
 	int openID = -1, availableNewTab = -1;
 
@@ -229,6 +241,10 @@ void CClientChatView::UpdateChatBox(CommonData newMsg) {
 		tabItem.pszText = (LPWSTR)(LPCWSTR)(chatBoxID);
 		m_tabChatBox.InsertItem(availableNewTab, &tabItem);
 		openID = availableNewTab;
+	}
+
+	if (curTab == -1) {
+		ShowTabNumber(openID);
 	}
 
 	chatBox[openID]->DisplayNewMsg(newMsg);

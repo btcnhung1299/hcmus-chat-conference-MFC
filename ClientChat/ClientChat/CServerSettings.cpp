@@ -19,7 +19,6 @@ void CServerSettings::DoDataExchange(CDataExchange* pDX) {
 
 	DDX_Control(pDX, inpServerIP, m_serverIP);
 	DDX_Control(pDX, inpServerPort, m_serverPort);
-	DDX_Control(pDX, inpYourPort, m_myPort);
 }
 
 
@@ -42,10 +41,6 @@ void CServerSettings::OnBtnClickConnect() {
 	m_serverIP.GetAddress(bufferServerIP);
 	serverIP.Format(L"%d", bufferServerIP);
 
-	CString bufferMyPort;
-	m_myPort.GetWindowText(bufferMyPort);
-	myPort = _ttoi(bufferMyPort);
-
 	EndDialog(btnConnect);
 }
 
@@ -55,8 +50,4 @@ UINT CServerSettings::GetServerPort() {
 
 CString CServerSettings::GetServerIP() {
 	return serverIP;
-}
-
-UINT CServerSettings::GetMyPort() {
-	return myPort;
 }

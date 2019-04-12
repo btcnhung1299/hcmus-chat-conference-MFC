@@ -6,10 +6,8 @@ class CServerSettings : public CDialog {
 	private:
 		CIPAddressCtrl m_serverIP;
 		CEdit m_serverPort;
-		CEdit m_myPort;
 
 		UINT serverPort;
-		UINT myPort;
 		CString serverIP;
 
 	public:
@@ -17,7 +15,6 @@ class CServerSettings : public CDialog {
 		virtual ~CServerSettings();
 		
 		UINT GetServerPort();
-		UINT GetMyPort();
 		CString GetServerIP();
 
 	// Dialog Data
