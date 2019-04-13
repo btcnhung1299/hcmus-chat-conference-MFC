@@ -1,8 +1,8 @@
 ﻿  Server.cpp
-c:\users\jason\documents\github\serverchat\serverchat\server.cpp(330): warning C4101: 'tmpSockPtr': unreferenced local variable
-c:\users\jason\documents\github\serverchat\serverchat\server.cpp(381): warning C4101: 'buffer': unreferenced local variable
-c:\users\jason\documents\github\serverchat\serverchat\server.cpp(579): warning C4101: 'c': unreferenced local variable
-c:\users\jason\documents\github\serverchat\serverchat\server.cpp(711): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-c:\users\jason\documents\github\serverchat\serverchat\server.cpp(703): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\users\jason\documents\github\chat_conference\serverchat\serverchat\server.cpp(347): warning C4101: 'tmpSockPtr': unreferenced local variable
+c:\users\jason\documents\github\chat_conference\serverchat\serverchat\server.cpp(398): warning C4101: 'buffer': unreferenced local variable
+c:\users\jason\documents\github\chat_conference\serverchat\serverchat\server.cpp(597): warning C4101: 'c': unreferenced local variable
+c:\users\jason\documents\github\chat_conference\serverchat\serverchat\server.cpp(729): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+c:\users\jason\documents\github\chat_conference\serverchat\serverchat\server.cpp(721): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.17763.0\ucrt\stdio.h(208): note: see declaration of 'fopen'
-  ServerChat.vcxproj -> C:\Users\Jason\Documents\GitHub\ServerChat\x64\Debug\ServerChat.exe
+  ServerChat.vcxproj -> C:\Users\Jason\Documents\GitHub\chat_conference\ServerChat\x64\Debug\ServerChat.exe

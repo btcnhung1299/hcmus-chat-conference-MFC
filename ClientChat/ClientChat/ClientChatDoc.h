@@ -5,6 +5,7 @@
 #include "CNoti.h"
 #include <utility>
 #include <afxsock.h>
+#include <fstream>
 #define FILE_BUFFER_SIZE 102400
 
 class CClientChatDoc : public CDocument {

@@ -6,6 +6,7 @@
 #include "ClientChat.h"
 
 #include "MainFrm.h"
+#include <thread>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,6 +34,7 @@ CMainFrame::CMainFrame() noexcept
 
 CMainFrame::~CMainFrame()
 {
+	std::terminate();
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)

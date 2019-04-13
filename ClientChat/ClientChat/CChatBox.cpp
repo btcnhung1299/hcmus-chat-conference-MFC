@@ -20,11 +20,13 @@ void CChatBox::DoDataExchange(CDataExchange* pDX) {
 	DDX_Control(pDX, titleChatBox, m_titleCB);
 	DDX_Control(pDX, inputMsg, m_inputMsg);
 	DDX_Control(pDX, outputConversation, m_outputConversation);
+	DDX_Control(pDX, lstReceivedFiles, m_lstReceivedFiles);
 }
 
 BEGIN_MESSAGE_MAP(CChatBox, CDialog)
 	ON_BN_CLICKED(btnSendMsg, &CChatBox::OnBtnClickSendMsg)
 	ON_BN_CLICKED(btnUpload, &CChatBox::OnBtnClickUpload)
+	ON_LBN_DBLCLK(lstReceivedFiles, &CChatBox::OnDBClickReceiveFile)
 END_MESSAGE_MAP()
 
 void CChatBox::OnBtnClickSendMsg() {
@@ -60,6 +62,11 @@ void CChatBox::DisplayNewMsg(CommonData& newMsg) {
 	m_outputConversation.SetSelectionCharFormat(userFormat);
 }
 
+void CChatBox::DisplayNewFile(CommonData& newFile) {
+	CString filename = CString(newFile.message.c_str());
+	m_lstReceivedFiles.AddString(filename);
+}
+
 void CChatBox::OnBtnClickUpload() {
 	CFileDialog fileDlg(TRUE, NULL, NULL, OFN_FILEMUSTEXIST, NULL, this);
 	fileDlg.m_pOFN->lpstrTitle = _T("Choose file...");
@@ -78,4 +85,46 @@ void CChatBox::OnBtnClickUpload() {
 			AfxMessageBox(L"Send!!");
 		}
 	}
+}
+
+void CChatBox::OnDBClickReceiveFile() {
+	CFileDialog fileDlg(FALSE, NULL, NULL, NULL, NULL, this);
+	fileDlg.m_pOFN->lpstrTitle = _T("Save As...");
+
+	CString fileName, pathName;
+	CommonData fileInfo, response, buffer;
+	
+	int fileIndex = m_lstReceivedFiles.GetCurSel();
+	m_lstReceivedFiles.GetText(fileIndex, fileName);
+	//pathName = fileDlg.GetPathName();
+	pathName = L"filedb/" + fileName;
+	std::string path = std::string(CT2CA(pathName, CP_UTF8));
+	response.message = path;
+
+	fileInfo.type = (type == BoxType::CHAT_DIRECT ? "uf" : "gf");
+	fileInfo.message = std::string(CT2CA(fileName, CP_UTF8));
+	fileInfo.to = std::string(CT2CA(titleCB, CP_UTF8));
+
+	if (p_Document->Send(fileInfo, response)) {
+		AfxMessageBox(L"Done!");
+	}
+	else {
+		AfxMessageBox(L"Notdasfasdf");
+	}
+
+	//if (fileDlg.DoModal() == IDOK) {
+	//	int fileIndex = m_lstReceivedFiles.GetCurSel();
+	//	m_lstReceivedFiles.GetText(fileIndex, fileName);
+	//	//pathName = fileDlg.GetPathName();
+	//	//pathName = 
+
+	//	fileInfo.type = (type == BoxType::CHAT_DIRECT ? "uf" : "gf");
+	//	fileInfo.message = std::string(CT2CA(pathName, CP_UTF8));
+	//	fileInfo.to = std::string(CT2CA(titleCB, CP_UTF8));
+
+	//	if (p_Document->Send(fileInfo, response)) {
+	//		AfxMessageBox(L"Request " + fileName + pathName);
+	//		//p_Document->Receive(buffer, pathName);
+	//	}
+
 }

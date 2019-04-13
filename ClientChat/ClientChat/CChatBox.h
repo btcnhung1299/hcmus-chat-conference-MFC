@@ -10,6 +10,7 @@ class CChatBox : public CDialog {
 		CStatic m_titleCB;
 		CEdit m_inputMsg;
 		CRichEditCtrl m_outputConversation;
+		CListBox m_lstReceivedFiles;
 
 		CommonData sendMsg;
 		CString titleCB;
@@ -27,6 +28,7 @@ class CChatBox : public CDialog {
 		void SetType(BoxType boxType) { type = boxType; }
 		CommonData GetSendMsg() { return sendMsg; }
 		void DisplayNewMsg(CommonData&);
+		void DisplayNewFile(CommonData&);
 
 	// Dialog Data
 	#ifdef AFX_DESIGN_TIME
@@ -40,6 +42,8 @@ class CChatBox : public CDialog {
 	public:
 		afx_msg void OnBtnClickSendMsg();
 		afx_msg void OnBtnClickUpload();
+		afx_msg void OnDBClickReceiveFile();
+		
 };
 
 

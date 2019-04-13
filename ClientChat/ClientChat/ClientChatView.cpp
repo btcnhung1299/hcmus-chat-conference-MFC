@@ -219,7 +219,7 @@ void CClientChatView::OnDBClickUser() {
 
 
 // ------------------------- TAB HELPING ----------------------------------------
-void CClientChatView::OpenChatBox(CString chatBoxID, BoxType boxType) {
+int CClientChatView::OpenChatBox(CString chatBoxID, BoxType boxType) {
 	ChatBoxType type = NEW_TAB;
 	int openID = -1, availableNewTab = -1;
 
@@ -249,6 +249,7 @@ void CClientChatView::OpenChatBox(CString chatBoxID, BoxType boxType) {
 	}
 
 	ShowTabNumber(openID);
+	return openID;
 }
 
 void CClientChatView::ShowTabNumber(int count) {	
@@ -316,6 +317,66 @@ void CClientChatView::OnSelChangeTabChatBox(NMHDR *pNMHDR, LRESULT *pResult) {
 	*pResult = 0;
 }
 
+void CClientChatView::UpdateActiveUsers(CommonData updateUserInfo) {
+	CString user(updateUserInfo.message.c_str());
+	int userPos = 0;
+	int userExisted = false;
+
+	while ((userPos = m_lstOnlineUsers.FindStringExact(userPos, user)) != LB_ERR) {
+		userExisted = true;
+		if (updateUserInfo.type == "dis") {
+			m_lstOnlineUsers.DeleteString(userPos);
+		}
+	}
+
+	if (!userExisted && updateUserInfo.type == "newUserLogin") {
+		m_lstOnlineUsers.AddString(user);
+	}
+}
+
+void CClientChatView::UpdateReceivedFiles(CommonData updateFile) {
+	CString filename(updateFile.message.c_str());
+	CString chatBoxID(updateFile.to.c_str());
+	if (updateFile.type == "fu") {
+		if (chatBoxID == GetDocument()->username) {
+			chatBoxID = updateFile.from.c_str();
+		}
+	}
+
+	int curTab = m_tabChatBox.GetCurSel();
+	ChatBoxType type = NEW_TAB;
+	int openID = -1, availableNewTab = -1;
+
+	for (int i = 0; i < MAX_CB; i++) {
+		CString temp = chatBox[i]->GetTitle();
+		if (chatBoxOccupied[i]) {
+			if (chatBox[i]->GetTitle() == chatBoxID) {
+				type = TAB_EXISTED;
+				openID = i;
+				break;
+			}
+		}
+		else {
+			if (availableNewTab == -1) {
+				availableNewTab = i;
+			}
+		}
+	}
+
+	if (type != TAB_EXISTED) {
+		chatBox[availableNewTab]->SetTitle(chatBoxID);
+		chatBox[availableNewTab]->SetType(BoxType::CHAT_DIRECT);
+		tabItem.pszText = (LPWSTR)(LPCWSTR)(chatBoxID);
+		m_tabChatBox.InsertItem(availableNewTab, &tabItem);
+		openID = availableNewTab;
+	}
+
+	if (curTab == -1) {
+		ShowTabNumber(openID);
+	}
+
+	chatBox[openID]->DisplayNewFile(updateFile);
+}
 
 // ------------------------- THREADS --------------------------------
 UINT CClientChatView::ThreadUpdate(LPVOID Param) {
@@ -333,10 +394,9 @@ UINT CClientChatView::ThreadUpdate(LPVOID Param) {
 void CClientChatView::UpdateOnView() {
 	CommonData receiveData;
 	GetDocument()->Receive(receiveData);
-	
-	if (receiveData.type == "newUserLogin") {
-		CString newUsername(receiveData.message.c_str());
-		this->m_lstOnlineUsers.AddString(newUsername);
+
+	if (receiveData.type == "newUserLogin" || receiveData.type == "dis") {
+		this->UpdateActiveUsers(receiveData);
 	}
 	else if (receiveData.type == "cg") {
 		CString chatBoxID = CString(receiveData.message.c_str());
@@ -344,6 +404,9 @@ void CClientChatView::UpdateOnView() {
 	}
 	else if (receiveData.type == "mu" || receiveData.type == "mg") {
 		UpdateChatBox(receiveData);
+	}
+	else if (receiveData.type == "fu" || receiveData.type == "fg") {
+		this->UpdateReceivedFiles(receiveData);
 	}
 }
 

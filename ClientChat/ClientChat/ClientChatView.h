@@ -40,9 +40,11 @@ class CClientChatView : public CFormView {
 	#endif
 
 	public:			// Tabbing
-		void OpenChatBox(CString chatBoxID, BoxType type);
+		int OpenChatBox(CString chatBoxID, BoxType type);
 		void UpdateChatBox(CommonData);
 		void ShowTabNumber(int count);
+		void UpdateActiveUsers(CommonData);
+		void UpdateReceivedFiles(CommonData);
 		
 	public:			// Thread
 		void UpdateOnView();

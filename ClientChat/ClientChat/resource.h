@@ -42,7 +42,6 @@
 #define titleServerIP                   1024
 #define titleServerPort                 1025
 #define inpUsername                     1026
-#define titleYourPort                   1026
 #define inpPassword                     1027
 #define chooseLogin                     1028
 #define chooseRegister                  1029
@@ -67,7 +66,11 @@
 #define titleChatBox                    1060
 #define grpConversation                 1061
 #define grpFeatures                     1062
+#define grpReceivedFiles                1062
 #define grpMembers                      1063
+#define btnUpload2                      1063
+#define IDC_LIST1                       1064
+#define lstReceivedFiles                1064
 
 // Next default values for new objects
 // 
@@ -75,7 +78,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        326
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1064
+#define _APS_NEXT_CONTROL_VALUE         1065
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

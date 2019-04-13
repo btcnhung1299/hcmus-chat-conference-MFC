@@ -37,6 +37,10 @@ CClientChatDoc::CClientChatDoc() noexcept {
 }
 
 CClientChatDoc::~CClientChatDoc() {
+	CDocument::~CDocument();
+	clntSock.Close();
+	mainClntSock.Close();
+	receiver.Close();
 }
 
 BOOL CClientChatDoc::OnNewDocument() {
@@ -80,6 +84,9 @@ BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 		tmpFilePath = dataSend.message;
 		dataSend.message = tmpFilePath.substr(tmpFilePath.find_last_of("/\\") + 1);
 	}
+	else if (dataSend.type == "uf" || dataSend.type == "gf") {
+		tmpFilePath = dataResponse.message;
+	}
 	
 	// Send and receive response from server after each request sent
 	SendCommonData(clntSock, dataSend);
@@ -115,7 +122,7 @@ BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 
 			// Sending file terminator
 			int terminator = 0;
-			clntSock.Receive(&terminator, sizeof(int), 0);
+			clntSock.Send(&terminator, sizeof(int), 0);
 			fclose(fp);
 
 			// Waiting until server received file successfully
@@ -124,6 +131,28 @@ BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 				clntSock.Receive(&fullReceive, sizeof(int), 0);
 			} while (fullReceive != 1);
 		}
+	}
+	else if (dataSend.type == "uf" || dataSend.type == "gf") {
+		std::ofstream fo;
+		fo.open(tmpFilePath.data(), std::ios::binary);
+		int toWriteSize = 0;
+		int temp = 0;
+
+		char buffer[FILE_BUFFER_SIZE];
+		do {
+			clntSock.Receive(&temp, sizeof(int), 0);
+			toWriteSize = temp;
+			if (toWriteSize <= 0)
+				break;
+			clntSock.Receive(buffer, toWriteSize, 0);
+			fo.write(buffer, toWriteSize);
+			temp = 0;
+		} while (toWriteSize > 0 && toWriteSize <= FILE_BUFFER_SIZE);
+
+		int check = 1;
+		clntSock.Send(&check, sizeof(int), 0);
+		fo.close();
+		sucRequest = true;
 	}
 
 	Out:
