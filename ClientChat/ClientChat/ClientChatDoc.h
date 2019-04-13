@@ -9,9 +9,9 @@
 #define FILE_BUFFER_SIZE 102400
 
 class CClientChatDoc : public CDocument {
-	private:
+	public:
 		CSocket mainClntSock;
-		CSocket clntSock, listenerConv, listenerUser, receiverConv, receiverUser;
+		CSocket clntSock, receiverConv;
 
 		UINT serverPort;
 		CString serverIP;
@@ -21,17 +21,13 @@ class CClientChatDoc : public CDocument {
 		CString username;
 		CString password;
 
-		std::string onlineUsers;
-
 	protected:
 		CClientChatDoc() noexcept;
 		DECLARE_DYNCREATE(CClientChatDoc)
 		virtual ~CClientChatDoc();
 
 	public:
-		std::string GetInitOnlineUsers() { return onlineUsers; }
-		void InitListenerConv();
-		void InitListenerUser();
+		void InitListener();
 
 	public:
 		virtual BOOL OnNewDocument();
@@ -42,10 +38,8 @@ class CClientChatDoc : public CDocument {
 	#endif // SHARED_HANDLERS
 
 	public:
-		CString GetUsername() { return username; }
 		BOOL Send(CommonData&, CommonData&);
-		void ReceiveConv(CommonData& receiveData);
-		void ReceiveUser();
+		void Receive(CommonData& receiveData);
 
 	#ifdef _DEBUG
 		virtual void AssertValid() const;
@@ -57,8 +51,6 @@ class CClientChatDoc : public CDocument {
 	// Generated message map functions
 	protected:
 		DECLARE_MESSAGE_MAP()
-
-
 
 	#ifdef SHARED_HANDLERS
 		// Helper function that sets search content for a Search Handler

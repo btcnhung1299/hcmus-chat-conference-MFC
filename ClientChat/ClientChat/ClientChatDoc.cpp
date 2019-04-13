@@ -23,30 +23,12 @@ END_MESSAGE_MAP()
 
 CClientChatDoc::CClientChatDoc() noexcept {
 	AfxSocketInit(NULL);
-	if (!mainClntSock.Create()) {
-		AfxMessageBox(L"Can't create main socket");
-	}
-	CString tmpAddr;
-	mainClntSock.GetSockNameEx(tmpAddr, myPort);
-	mainClntSock.Close();
 
-	BOOL sucCreate = false;
-	UINT tmpPort;
-	while (!sucCreate) {
-		clntSock.Create();
-		clntSock.GetSockNameEx(tmpAddr, tmpPort);
-
-		if (tmpPort == myPort) {
-			clntSock.Close();
-		}
-		else {
-			sucCreate = true;
-		}
-	}
-
+	// Connect to server to get contact port
+	CSocket clntSock;
+	clntSock.Create();
 	CServerSettings serverSettingsDlg;
 	BOOL connected = false;
-	
 
 	while (!connected && serverSettingsDlg.DoModal() == btnConnect) {
 		serverPort = serverSettingsDlg.GetServerPort();
@@ -56,68 +38,7 @@ CClientChatDoc::CClientChatDoc() noexcept {
 			clntSock.Receive(&contactPort, 4, 0);
 		}
 	}
-
 	clntSock.Close();
-
-	CLogin loginDlg;
-	CommonData loginInfo, response;
-	BOOL loginStatus = false;
-	int loginOption = 0;
-
-	while (!loginStatus) {
-		if (loginDlg.DoModal() == btnCancelLogin) {
-			break;
-		}
-
-		clntSock.Create();
-		clntSock.Connect(serverIP, contactPort);
-
-		// Save username to global variable for later use
-		username = loginDlg.GetUsername();
-
-		loginOption = loginDlg.GetLoginOption();
-		CT2CA bufferUsername(username, CP_UTF8);
-		CT2CA bufferPassword(loginDlg.GetPassword(), CP_UTF8);
-
-		loginInfo.from = std::to_string(myPort);
-		loginInfo.type = (loginOption == LoginType::LOGIN ? "li" : "re");
-		loginInfo.fileSize = username.GetLength();
-		loginInfo.message = std::string(bufferUsername) + std::string(bufferPassword);
-
-		SendCommonData(clntSock, loginInfo);
-		ReceiveCommonData(clntSock, response);
-
-		if (loginOption == LoginType::REGISTER) {
-			if (response.type == "suc") {
-				CNoti notiSuccess(NotiType::SUCCESS_REGISTER);
-				notiSuccess.DoModal();
-			}
-			else if (response.type == "dup") {
-				CNoti notiDuplicate(NotiType::DUPLICATE_REGISTER);
-				notiDuplicate.DoModal();
-			}
-			else {
-				AfxMessageBox(L"Undefined registration response");
-			}
-		}
-		else {
-			if (response.type == "lisuc") {
-				onlineUsers = response.message;
-				CNoti notiSuccess(NotiType::SUCCESS_LOGIN);
-				notiSuccess.DoModal();
-				loginStatus = true;
-			}
-			else if (response.type == "fail") {
-				CNoti notiFail(NotiType::NOTEXIST_LOGIN);
-				notiFail.DoModal();
-			}
-			else {
-				AfxMessageBox(L"Undefined login response");
-			}
-		}
-
-		clntSock.Close();
-	}
 }
 
 CClientChatDoc::~CClientChatDoc() {
@@ -189,23 +110,13 @@ BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 				do {
 					byteRead = fread(buffer, 1, FILE_BUFFER_SIZE, fp);
 					clntSock.Send(&byteRead, sizeof(int), 0);
-
 					if (clntSock.Send(buffer, byteRead) != byteRead) {
 						AfxMessageBox(L"loss");
 					}
 				} while (byteRead == FILE_BUFFER_SIZE);
 
-				int zero = 0;
-				clntSock.Send(&zero, sizeof(int), 0); //End file mess to Server
-
 				fclose(fp);
 			}
-
-			//wait to server receive finish
-			int check = 0;
-			do {
-				clntSock.Receive(&check, sizeof(int), 0);
-			} while (check != 1);
 		}
 	}
 
@@ -213,19 +124,13 @@ BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 	return res;
 }
 
-void CClientChatDoc::InitListenerConv() {
+void CClientChatDoc::InitListener() {
 	if (!mainClntSock.Create(myPort)) {
 		AfxMessageBox(L"Can't create listener");
 	}
 }
 
-void CClientChatDoc::InitListenerUser() {
-	if (!listenerConv.Create()) {
-		AfxMessageBox(L"Can't create listener");
-	}
-}
-
-void CClientChatDoc::ReceiveConv(CommonData& receiveData) {
+void CClientChatDoc::Receive(CommonData& receiveData) {
 	if (!mainClntSock.Listen()) {
 		AfxMessageBox(L"Can't listen");
 	}
@@ -235,9 +140,6 @@ void CClientChatDoc::ReceiveConv(CommonData& receiveData) {
 	receiverConv.Close();
 }
 
-void CClientChatDoc::ReceiveUser() {
-
-}
 
 // CClientChatDoc serialization
 

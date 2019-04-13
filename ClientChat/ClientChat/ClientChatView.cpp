@@ -35,6 +35,83 @@ void CClientChatView::OnInitialUpdate() {
 	CFormView::OnInitialUpdate();
 	GetParentFrame()->RecalcLayout();
 	ResizeParentToFit();
+	CClientChatDoc *thisDoc = GetDocument();
+
+	// Create main client socket
+	if (!thisDoc->mainClntSock.Create()) {
+		AfxMessageBox(L"Can't create main socket");
+	}
+	CString tmpAddr;
+	thisDoc->mainClntSock.GetSockNameEx(tmpAddr, thisDoc->myPort);
+	thisDoc->mainClntSock.Close();
+
+	// Open new thread to update conversation
+	if (!AfxBeginThread(ThreadUpdateConversation, reinterpret_cast<LPVOID>(this), THREAD_PRIORITY_NORMAL, 0, 0, NULL)) {
+		AfxMessageBox(L"Failed creating thread to update conversation");
+	}
+	
+	// Open login dialog
+	CLogin loginDlg;
+	CommonData loginInfo, response;
+	CSocket clntSock;
+	std::string onlineUsers;
+	BOOL loginStatus = false;
+	int loginOption = 0;
+
+	while (!loginStatus) {
+		if (loginDlg.DoModal() == btnCancelLogin) {
+			break;
+		}
+
+		clntSock.Create();
+		clntSock.Connect(thisDoc->serverIP, thisDoc->contactPort);
+
+		// Save username to global variable for later use
+		thisDoc->username = loginDlg.GetUsername();
+
+		loginOption = loginDlg.GetLoginOption();
+		CT2CA bufferUsername(thisDoc->username, CP_UTF8);
+		CT2CA bufferPassword(loginDlg.GetPassword(), CP_UTF8);
+
+		loginInfo.from = std::to_string(thisDoc->myPort);
+		loginInfo.type = (loginOption == LoginType::LOGIN ? "li" : "re");
+		loginInfo.fileSize = thisDoc->username.GetLength();
+		loginInfo.message = std::string(bufferUsername) + std::string(bufferPassword);
+
+		SendCommonData(clntSock, loginInfo);
+		ReceiveCommonData(clntSock, response);
+
+		if (loginOption == LoginType::REGISTER) {
+			if (response.type == "suc") {
+				CNoti notiSuccess(NotiType::SUCCESS_REGISTER);
+				notiSuccess.DoModal();
+			}
+			else if (response.type == "dup") {
+				CNoti notiDuplicate(NotiType::DUPLICATE_REGISTER);
+				notiDuplicate.DoModal();
+			}
+			else {
+				AfxMessageBox(L"Undefined registration response");
+			}
+		}
+		else {
+			if (response.type == "lisuc") {
+				onlineUsers = response.message;
+				CNoti notiSuccess(NotiType::SUCCESS_LOGIN);
+				notiSuccess.DoModal();
+				loginStatus = true;
+			}
+			else if (response.type == "fail") {
+				CNoti notiFail(NotiType::NOTEXIST_LOGIN);
+				notiFail.DoModal();
+			}
+			else {
+				AfxMessageBox(L"Undefined login response");
+			}
+		}
+
+		clntSock.Close();
+	}
 
 	// Determine size of sub tab
 	CRect tabRect;
@@ -55,33 +132,20 @@ void CClientChatView::OnInitialUpdate() {
 	tabItem.mask = TCIF_TEXT;
 
 	// Update users active in the beginning
-	std::string initOnlineUsers = GetDocument()->GetInitOnlineUsers();
-	CString username = GetDocument()->GetUsername();
+	CString username = GetDocument()->username;
 	CString bufferOnlineUser;
 
 	int startPos = 0, endPos = 0;
-	for (int i = 1; i < initOnlineUsers.length(); i++) {
-		if (initOnlineUsers[i] == '\n') {
+	for (int i = 1; i < onlineUsers.length(); i++) {
+		if (onlineUsers[i] == '\n') {
 			endPos = i;
-			bufferOnlineUser = initOnlineUsers.substr(startPos, endPos - startPos).c_str();
+			bufferOnlineUser = onlineUsers.substr(startPos, endPos - startPos).c_str();
 			if (bufferOnlineUser != username) {
 				m_lstOnlineUsers.AddString(bufferOnlineUser);
 			}
 			startPos = endPos + 1;
 		}
 	}
-
-	/*if (!AfxBeginThread(ThreadUpdateOnlineUsers, reinterpret_cast<LPVOID>(this), THREAD_PRIORITY_NORMAL, 0, 0, NULL)) {
-		AfxMessageBox(L"Failed creating thread to update online users");
-	}
-	*/
-
-	// Open new thread to update conversation
-	if (!AfxBeginThread(ThreadUpdateConversation, reinterpret_cast<LPVOID>(this), THREAD_PRIORITY_NORMAL, 0, 0, NULL)) {
-		AfxMessageBox(L"Failed creating thread to update conversation");
-	}
-
-
 }
 
 
@@ -210,7 +274,7 @@ void CClientChatView::UpdateChatBox(CommonData newMsg) {
 	// - Direct message: chatbox ID = the another's ID
 	CString chatBoxID(newMsg.to.c_str());
 	if (newMsg.type == "mu") {
-		if (chatBoxID == GetDocument()->GetUsername()) {
+		if (chatBoxID == GetDocument()->username) {
 			chatBoxID = newMsg.from.c_str();
 		}
 	}
@@ -256,30 +320,15 @@ void CClientChatView::OnSelChangeTabChatBox(NMHDR *pNMHDR, LRESULT *pResult) {
 }
 
 // ------------------------- THREADS --------------------------------
-UINT CClientChatView::ThreadUpdateOnlineUsers(LPVOID Param) {
-	CClientChatView *pThis = reinterpret_cast<CClientChatView *>(Param);
-	pThis->GetDocument()->InitListenerUser();
-	BOOL end = false;
 
-	while (!end) {
-
-	}
-	return 0;
-}
-
-void CClientChatView::UpdateOnlineUsersOnView() {
-	//std::pair<CString, CString> msg;
-	//GetDocument()->Receive(msg);
-	//AfxMessageBox(L"abc");
-}
 
 UINT CClientChatView::ThreadUpdateConversation(LPVOID Param) {
-	CClientChatView *pThis = reinterpret_cast<CClientChatView *>(Param);
-	pThis->GetDocument()->InitListenerConv();
+	CClientChatView *pView = reinterpret_cast<CClientChatView *>(Param);
+	pView->GetDocument()->InitListener();
 	BOOL end = false;
 	
 	while (!end) {
-		pThis->UpdateConversationOnView();
+		pView->UpdateConversationOnView();
 	}
 
 	return 0;
@@ -287,7 +336,7 @@ UINT CClientChatView::ThreadUpdateConversation(LPVOID Param) {
 
 void CClientChatView::UpdateConversationOnView() {
 	CommonData response;
-	GetDocument()->ReceiveConv(response);
+	GetDocument()->Receive(response);
 	
 	if (response.type == "cg") {
 		CString chatBoxID = CString(response.message.c_str());
@@ -297,9 +346,6 @@ void CClientChatView::UpdateConversationOnView() {
 		UpdateChatBox(response);
 	}
 }
-
-
-
 
 
 
