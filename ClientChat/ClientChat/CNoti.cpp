@@ -38,6 +38,14 @@ CNoti::CNoti(NotiType type, CWnd* pParent) : CDialog(IDD_Noti, pParent) {
 			notiContent = _T("Create group successfully.");
 			break;
 		}
+		case (NotiType::SUCCESS_SEND): {
+			notiContent = _T("Upload successful.");
+			break;
+		}
+		case (NotiType::FAIL_SEND): {
+			notiContent = _T("Unable to upload your file.");
+			break;
+		}
 		default: notiContent = _T("Not recognized"); break;
 	}
 }

@@ -69,8 +69,6 @@ void CChatBox::DisplayNewFile(CommonData& newFile) {
 
 void CChatBox::OnBtnClickUpload() {
 	CFileDialog fileDlg(TRUE, NULL, NULL, OFN_FILEMUSTEXIST, NULL, this);
-	fileDlg.m_pOFN->lpstrTitle = _T("Choose file...");
-	
 	CommonData fileInfo, response;
 	CString pathName;
 
@@ -82,49 +80,36 @@ void CChatBox::OnBtnClickUpload() {
 		
 		// If file metadata received by server, send actual file
 		if (p_Document->Send(fileInfo, response)) {
-			AfxMessageBox(L"Send!!");
+			CNoti notiSuccess(NotiType::SUCCESS_SEND);
+			notiSuccess.DoModal();
+		}
+		else {
+			CNoti notiFail(NotiType::FAIL_SEND);
+			notiFail.DoModal();
 		}
 	}
 }
 
 void CChatBox::OnDBClickReceiveFile() {
-	CFileDialog fileDlg(FALSE, NULL, NULL, NULL, NULL, this);
-	fileDlg.m_pOFN->lpstrTitle = _T("Save As...");
-
 	CString fileName, pathName;
-	CommonData fileInfo, response, buffer;
-	
 	int fileIndex = m_lstReceivedFiles.GetCurSel();
 	m_lstReceivedFiles.GetText(fileIndex, fileName);
-	//pathName = fileDlg.GetPathName();
-	pathName = L"filedb/" + fileName;
-	std::string path = std::string(CT2CA(pathName, CP_UTF8));
-	response.message = path;
 
-	fileInfo.type = (type == BoxType::CHAT_DIRECT ? "uf" : "gf");
-	fileInfo.message = std::string(CT2CA(fileName, CP_UTF8));
-	fileInfo.to = std::string(CT2CA(titleCB, CP_UTF8));
+	CFileDialog fileDlg(FALSE, NULL, fileName, NULL, NULL, this);
+	CommonData fileInfo, response;
 
-	if (p_Document->Send(fileInfo, response)) {
-		AfxMessageBox(L"Done!");
+	if (fileDlg.DoModal() == IDOK) {
+		pathName = fileDlg.GetPathName();
+		fileInfo.type = (type == BoxType::CHAT_DIRECT ? "uf" : "gf");
+		fileInfo.to = std::string(CT2CA(titleCB, CP_UTF8));
+		fileInfo.message = std::string(CT2CA(fileName, CP_UTF8));
+		response.message = std::string(CT2CA(pathName, CP_UTF8));
+
+		if (p_Document->Send(fileInfo, response)) {
+			AfxMessageBox(L"Finish");
+		}
+		else {
+			AfxMessageBox(L"No");
+		}
 	}
-	else {
-		AfxMessageBox(L"Notdasfasdf");
-	}
-
-	//if (fileDlg.DoModal() == IDOK) {
-	//	int fileIndex = m_lstReceivedFiles.GetCurSel();
-	//	m_lstReceivedFiles.GetText(fileIndex, fileName);
-	//	//pathName = fileDlg.GetPathName();
-	//	//pathName = 
-
-	//	fileInfo.type = (type == BoxType::CHAT_DIRECT ? "uf" : "gf");
-	//	fileInfo.message = std::string(CT2CA(pathName, CP_UTF8));
-	//	fileInfo.to = std::string(CT2CA(titleCB, CP_UTF8));
-
-	//	if (p_Document->Send(fileInfo, response)) {
-	//		AfxMessageBox(L"Request " + fileName + pathName);
-	//		//p_Document->Receive(buffer, pathName);
-	//	}
-
 }

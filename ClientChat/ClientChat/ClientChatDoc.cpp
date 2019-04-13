@@ -78,17 +78,17 @@ BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 	CT2CA bufferUsername(username, CP_UTF8);
 	dataSend.from = std::string(bufferUsername);
 
-	// Split file name from local path name in case of sending file request
-	std::string tmpFilePath;
+	// User specified path for sending / receiving file
+	std::string filePath;
 	if (dataSend.type == "fu" || dataSend.type == "fg") {
-		tmpFilePath = dataSend.message;
-		dataSend.message = tmpFilePath.substr(tmpFilePath.find_last_of("/\\") + 1);
+		filePath = dataSend.message;
+		dataSend.message = filePath.substr(filePath.find_last_of("/\\") + 1);
 	}
 	else if (dataSend.type == "uf" || dataSend.type == "gf") {
-		tmpFilePath = dataResponse.message;
+		filePath = dataResponse.message;
 	}
 	
-	// Send and receive response from server after each request sent
+	// Send and receive response from server after each request
 	SendCommonData(clntSock, dataSend);
 	ReceiveCommonData(clntSock, dataResponse);
 
@@ -102,7 +102,7 @@ BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 
 		// If metadata received successfully by server
 		if (sucRequest) {
-			FILE *fp = fopen(tmpFilePath.data(), "rb");
+			FILE *fp = fopen(filePath.data(), "rb");
 			char buffer[FILE_BUFFER_SIZE];
 			int byteRead = 0;
 
@@ -116,7 +116,7 @@ BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 				byteRead = fread(buffer, 1, FILE_BUFFER_SIZE, fp);
 				clntSock.Send(&byteRead, sizeof(int), 0);
 				if (clntSock.Send(buffer, byteRead) != byteRead) {
-					AfxMessageBox(L"loss");
+					AfxMessageBox(L"Data loss occured!");
 				}
 			} while (byteRead == FILE_BUFFER_SIZE);
 
@@ -133,26 +133,35 @@ BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 		}
 	}
 	else if (dataSend.type == "uf" || dataSend.type == "gf") {
-		std::ofstream fo;
-		fo.open(tmpFilePath.data(), std::ios::binary);
-		int toWriteSize = 0;
-		int temp = 0;
+		sucRequest = ((dataResponse.type == "uf" || dataResponse.type == "gf") ? true : false);
 
-		char buffer[FILE_BUFFER_SIZE];
-		do {
-			clntSock.Receive(&temp, sizeof(int), 0);
-			toWriteSize = temp;
-			if (toWriteSize <= 0)
-				break;
-			clntSock.Receive(buffer, toWriteSize, 0);
-			fo.write(buffer, toWriteSize);
-			temp = 0;
-		} while (toWriteSize > 0 && toWriteSize <= FILE_BUFFER_SIZE);
+		// If having received metadata, start receiving actual file from server
+		if (sucRequest) {
+			std::ofstream fo;
+			fo.open(filePath.data(), std::ios::binary);
+			if (!fo) {
+				AfxMessageBox(L"Unable to save file to specified path.");
+				sucRequest = false;
+				goto Out;
+			}
 
-		int check = 1;
-		clntSock.Send(&check, sizeof(int), 0);
-		fo.close();
-		sucRequest = true;
+			char buffer[FILE_BUFFER_SIZE];
+			int toWriteSize = 0;
+			int temp = 0;
+
+			do {
+				clntSock.Receive(&temp, sizeof(int), 0);
+				toWriteSize = temp;
+				if (toWriteSize <= 0) break;
+				clntSock.Receive(buffer, toWriteSize, 0);
+				fo.write(buffer, toWriteSize);
+				temp = 0;
+			} while (toWriteSize > 0 && toWriteSize <= FILE_BUFFER_SIZE);
+
+			int check = 1;
+			clntSock.Send(&check, sizeof(int), 0);
+			fo.close();
+		}
 	}
 
 	Out:

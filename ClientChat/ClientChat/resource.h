@@ -1,10 +1,5 @@
-//{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
-// Used by ClientChat.rc
-//
 #define IDD_ABOUTBOX                    100
 #define IDD_About                       100
-#define IDD_CLIENTCHAT_FORM             101
 #define IDD_MainWnd                     101
 #define IDR_POPUP_EDIT                  119
 #define ID_STATUSBAR_PANE1              120
@@ -57,7 +52,6 @@
 #define btnCreateNewGroup               1049
 #define btnSendMsg                      1050
 #define grpOnlineUsers                  1051
-#define IDC_LIST2                       1053
 #define lstOnlineUsers                  1053
 #define outputConversation              1054
 #define inputMsg                        1055
@@ -68,12 +62,9 @@
 #define grpFeatures                     1062
 #define grpReceivedFiles                1062
 #define grpMembers                      1063
-#define btnUpload2                      1063
-#define IDC_LIST1                       1064
 #define lstReceivedFiles                1064
 
-// Next default values for new objects
-// 
+ 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        326

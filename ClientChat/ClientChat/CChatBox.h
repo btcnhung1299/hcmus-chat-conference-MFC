@@ -1,6 +1,7 @@
 #pragma once
 #include "CommonLib.h"
 #include "ClientChatDoc.h"
+#include "CNoti.h"
 enum BoxType { CHAT_GROUP, CHAT_DIRECT };
 
 class CChatBox : public CDialog {
