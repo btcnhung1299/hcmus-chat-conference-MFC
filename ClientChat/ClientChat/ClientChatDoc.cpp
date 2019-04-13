@@ -1,12 +1,9 @@
 #include "stdafx.h"
-// SHARED_HANDLERS can be defined in an ATL project implementing preview, thumbnail
-// and search filter handlers and allows sharing of document code with that project.
 #ifndef SHARED_HANDLERS
 #include "ClientChat.h"
 #endif
 
 #include "ClientChatDoc.h"
-
 #include <propkey.h>
 
 #ifdef _DEBUG
@@ -14,13 +11,11 @@
 #endif
 
 IMPLEMENT_DYNCREATE(CClientChatDoc, CDocument)
-
 BEGIN_MESSAGE_MAP(CClientChatDoc, CDocument)
 END_MESSAGE_MAP()
 
 
-// CClientChatDoc construction/destruction
-
+// ---------------------------- CONSTRUCTOR / DESTRUCTOR -----------------------
 CClientChatDoc::CClientChatDoc() noexcept {
 	AfxSocketInit(NULL);
 
@@ -48,13 +43,10 @@ BOOL CClientChatDoc::OnNewDocument() {
 	if (!CDocument::OnNewDocument()) {
 		return FALSE;
 	}
-
-	// TODO: add reinitialization code here
-	// (SDI documents will reuse this document)
-
 	return TRUE;
 }
 
+// --------------------------- SEND REQUESTS ------------------------
 BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 	if (!clntSock.Create()) {
 		AfxMessageBox(L"Can't create socket");
@@ -78,52 +70,69 @@ BOOL CClientChatDoc::Send(CommonData& dataSend, CommonData& dataResponse) {
 		AfxMessageBox(L"Can't connect to contace port provided");
 	}
 
-	std::string tmpFilePath;
+	// Add username to every packet sent
 	CT2CA bufferUsername(username, CP_UTF8);
 	dataSend.from = std::string(bufferUsername);
 
+	// Split file name from local path name in case of sending file request
+	std::string tmpFilePath;
 	if (dataSend.type == "fu" || dataSend.type == "fg") {
 		tmpFilePath = dataSend.message;
-		int deli = tmpFilePath.find_last_of("/\\");
-		dataSend.message = tmpFilePath.substr(deli + 1);
+		dataSend.message = tmpFilePath.substr(tmpFilePath.find_last_of("/\\") + 1);
 	}
-		
+	
+	// Send and receive response from server after each request sent
 	SendCommonData(clntSock, dataSend);
 	ReceiveCommonData(clntSock, dataResponse);
 
-	BOOL res = false;
+	// Handle server responses
+	BOOL sucRequest = false;
 	if (dataSend.type == "cg") {
-		res = (dataResponse.type == "cg" ? true : false);
+		sucRequest = (dataResponse.type == "cg" ? true : false);
 	}
 	else if (dataSend.type == "fu" || dataSend.type == "fg") {
-		res = ((dataResponse.type == "fu" || dataResponse.type == "fg") ? true : false);
-		if (res) {
+		sucRequest = ((dataResponse.type == "fu" || dataResponse.type == "fg") ? true : false);
+
+		// If metadata received successfully by server
+		if (sucRequest) {
 			FILE *fp = fopen(tmpFilePath.data(), "rb");
 			char buffer[FILE_BUFFER_SIZE];
 			int byteRead = 0;
 
 			if (fp == NULL) {
 				AfxMessageBox(L"File not found!");
-				res = false;
+				sucRequest = false;
+				goto Out;
 			}
-			else {
-				do {
-					byteRead = fread(buffer, 1, FILE_BUFFER_SIZE, fp);
-					clntSock.Send(&byteRead, sizeof(int), 0);
-					if (clntSock.Send(buffer, byteRead) != byteRead) {
-						AfxMessageBox(L"loss");
-					}
-				} while (byteRead == FILE_BUFFER_SIZE);
+			
+			do {
+				byteRead = fread(buffer, 1, FILE_BUFFER_SIZE, fp);
+				clntSock.Send(&byteRead, sizeof(int), 0);
+				if (clntSock.Send(buffer, byteRead) != byteRead) {
+					AfxMessageBox(L"loss");
+				}
+			} while (byteRead == FILE_BUFFER_SIZE);
 
-				fclose(fp);
-			}
+			// Sending file terminator
+			int terminator = 0;
+			clntSock.Receive(&terminator, sizeof(int), 0);
+			fclose(fp);
+
+			// Waiting until server received file successfully
+			int fullReceive = 0;
+			do {
+				clntSock.Receive(&fullReceive, sizeof(int), 0);
+			} while (fullReceive != 1);
 		}
 	}
 
+	Out:
 	clntSock.Close();
-	return res;
+	return sucRequest;
 }
 
+
+// -------------------- THREAD - RECEIVE REQUESTS -------------------
 void CClientChatDoc::InitListener() {
 	if (!mainClntSock.Create(myPort)) {
 		AfxMessageBox(L"Can't create listener");
@@ -135,20 +144,17 @@ void CClientChatDoc::Receive(CommonData& receiveData) {
 		AfxMessageBox(L"Can't listen");
 	}
 
-	mainClntSock.Accept(receiverConv);
-	ReceiveCommonData(receiverConv, receiveData);
-	receiverConv.Close();
+	mainClntSock.Accept(receiver);
+	ReceiveCommonData(receiver, receiveData);
+	receiver.Close();
 }
 
 
-// CClientChatDoc serialization
-
+// ------------------------ SERIALIZATION ----------------------------
 void CClientChatDoc::Serialize(CArchive& ar) {
 	if (ar.IsStoring()) {
-		// TODO: add storing code here
 	}
 	else {
-		// TODO: add loading code here
 	}
 }
 
@@ -198,9 +204,7 @@ void CClientChatDoc::SetSearchContent(const CString& value) {
 	}
 }
 
-#endif // SHARED_HANDLERS
-
-// CClientChatDoc diagnostics
+#endif
 
 #ifdef _DEBUG
 void CClientChatDoc::AssertValid() const {
@@ -210,7 +214,4 @@ void CClientChatDoc::AssertValid() const {
 void CClientChatDoc::Dump(CDumpContext& dc) const {
 	CDocument::Dump(dc);
 }
-#endif //_DEBUG
-
-
-// CClientChatDoc commands
+#endif

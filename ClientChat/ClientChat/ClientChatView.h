@@ -1,8 +1,6 @@
 #pragma once
-
 #include "CChatBox.h"
 #define MAX_CB 5
-
 enum ChatBoxType { TAB_EXISTED, NEW_TAB };
 
 class CClientChatView : public CFormView {
@@ -17,51 +15,43 @@ class CClientChatView : public CFormView {
 		TCITEM tabItem;					// Tab bar
 		CRect subTabRect;				// Tab size
 
-	protected: 
+	protected:		// Constructor & Destructor
 		CClientChatView() noexcept;
+		virtual void OnInitialUpdate();
 		virtual ~CClientChatView();
 		DECLARE_DYNCREATE(CClientChatView)
 
 	public:
-	#ifdef AFX_DESIGN_TIME
-		enum{ IDD = IDD_MainWnd };
-	#endif
-
-	public:
+		virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 		CClientChatDoc* GetDocument() const;
 
-	public:
-		void OpenChatBox(CString chatBoxID, BoxType type);
-		void UpdateChatBox(CommonData);
-		void ShowTabNumber(int count);
-		void UpdateOnlineUsersOnView();
-		void UpdateConversationOnView();
-		static UINT ThreadUpdateOnlineUsers(LPVOID Param);
-		static UINT ThreadUpdateConversation(LPVOID Param);
-
-	public:
-		virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-
-	protected:
+	protected:		// Event handlers
 		virtual void DoDataExchange(CDataExchange* pDX);
-		virtual void OnInitialUpdate();
-		
-
-	#ifdef _DEBUG
-		virtual void AssertValid() const;
-		virtual void Dump(CDumpContext& dc) const;
-	#endif
-
-	protected:
-
-	// Generated message map functions
-	protected:
 		afx_msg void OnBtnClickCreateGroup();
 		afx_msg void OnDBClickUser();
 		afx_msg void OnSelChangeTabChatBox(NMHDR *pNMHDR, LRESULT *pResult);
 		afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 		afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 		DECLARE_MESSAGE_MAP()
+
+	public:
+	#ifdef AFX_DESIGN_TIME
+		enum{ IDD = IDD_MainWnd };
+	#endif
+
+	public:			// Tabbing
+		void OpenChatBox(CString chatBoxID, BoxType type);
+		void UpdateChatBox(CommonData);
+		void ShowTabNumber(int count);
+		
+	public:			// Thread
+		void UpdateOnView();
+		static UINT ThreadUpdate(LPVOID Param);
+
+	#ifdef _DEBUG
+		virtual void AssertValid() const;
+		virtual void Dump(CDumpContext& dc) const;
+	#endif
 };
 
 

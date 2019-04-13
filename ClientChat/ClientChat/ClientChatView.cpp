@@ -31,6 +31,8 @@ BOOL CClientChatView::PreCreateWindow(CREATESTRUCT& cs) {
 	return CFormView::PreCreateWindow(cs);
 }
 
+
+// ------------------------- INITIAL SET UP ------------------------------------
 void CClientChatView::OnInitialUpdate() {
 	CFormView::OnInitialUpdate();
 	GetParentFrame()->RecalcLayout();
@@ -45,8 +47,8 @@ void CClientChatView::OnInitialUpdate() {
 	thisDoc->mainClntSock.GetSockNameEx(tmpAddr, thisDoc->myPort);
 	thisDoc->mainClntSock.Close();
 
-	// Open new thread to update conversation
-	if (!AfxBeginThread(ThreadUpdateConversation, reinterpret_cast<LPVOID>(this), THREAD_PRIORITY_NORMAL, 0, 0, NULL)) {
+	// Open new thread for update
+	if (!AfxBeginThread(ThreadUpdate, reinterpret_cast<LPVOID>(this), THREAD_PRIORITY_NORMAL, 0, 0, NULL)) {
 		AfxMessageBox(L"Failed creating thread to update conversation");
 	}
 	
@@ -215,6 +217,7 @@ void CClientChatView::OnDBClickUser() {
 	OpenChatBox(bufferSelUser, BoxType::CHAT_DIRECT);
 }
 
+
 // ------------------------- TAB HELPING ----------------------------------------
 void CClientChatView::OpenChatBox(CString chatBoxID, BoxType boxType) {
 	ChatBoxType type = NEW_TAB;
@@ -248,13 +251,7 @@ void CClientChatView::OpenChatBox(CString chatBoxID, BoxType boxType) {
 	ShowTabNumber(openID);
 }
 
-void CClientChatView::ShowTabNumber(int count) {
-	/*CChatBox *m_subChatBox[MAX_CB];
-	for (int i = 0; i < MAX_CB; i++) {
-		m_subChatBox[i] = &chatBox[i];
-
-	}*/
-	
+void CClientChatView::ShowTabNumber(int count) {	
 	for (int i = 0; i < MAX_CB; i++) {
 		if (i != count) {
 			chatBox[i]->ShowWindow(SW_HIDE);
@@ -319,31 +316,34 @@ void CClientChatView::OnSelChangeTabChatBox(NMHDR *pNMHDR, LRESULT *pResult) {
 	*pResult = 0;
 }
 
+
 // ------------------------- THREADS --------------------------------
-
-
-UINT CClientChatView::ThreadUpdateConversation(LPVOID Param) {
+UINT CClientChatView::ThreadUpdate(LPVOID Param) {
 	CClientChatView *pView = reinterpret_cast<CClientChatView *>(Param);
 	pView->GetDocument()->InitListener();
 	BOOL end = false;
 	
 	while (!end) {
-		pView->UpdateConversationOnView();
+		pView->UpdateOnView();
 	}
 
 	return 0;
 }
 
-void CClientChatView::UpdateConversationOnView() {
-	CommonData response;
-	GetDocument()->Receive(response);
+void CClientChatView::UpdateOnView() {
+	CommonData receiveData;
+	GetDocument()->Receive(receiveData);
 	
-	if (response.type == "cg") {
-		CString chatBoxID = CString(response.message.c_str());
+	if (receiveData.type == "newUserLogin") {
+		CString newUsername(receiveData.message.c_str());
+		this->m_lstOnlineUsers.AddString(newUsername);
+	}
+	else if (receiveData.type == "cg") {
+		CString chatBoxID = CString(receiveData.message.c_str());
 		OpenChatBox(chatBoxID, BoxType::CHAT_GROUP);
 	}
-	else if (response.type == "mu" || response.type == "mg") {
-		UpdateChatBox(response);
+	else if (receiveData.type == "mu" || receiveData.type == "mg") {
+		UpdateChatBox(receiveData);
 	}
 }
 
