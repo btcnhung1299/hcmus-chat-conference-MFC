@@ -7,6 +7,7 @@
 IMPLEMENT_DYNAMIC(CLogin, CDialog)
 
 CLogin::CLogin(CWnd* pParent /*=nullptr*/) : CDialog(IDD_Login, pParent) {
+	OnBtnClickChooseLogin();
 }
 
 CLogin::~CLogin() {

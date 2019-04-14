@@ -203,7 +203,8 @@ void CClientChatView::OnBtnClickCreateGroup() {
 		notiSuccess.DoModal();
 	}
 	else {
-		AfxMessageBox(L"Fail creating new group");
+		CNoti notiFail(NotiType::FAIL_GROUP);
+		notiFail.DoModal();
 	}
 }
 
@@ -242,6 +243,9 @@ int CClientChatView::OpenChatBox(CString chatBoxID, BoxType boxType) {
 	if (type != TAB_EXISTED) {
 		chatBox[availableNewTab]->SetTitle(chatBoxID);
 		chatBox[availableNewTab]->SetType(boxType);
+		if (boxType == BoxType::CHAT_GROUP) {
+			chatBoxID = _T("Group ") + chatBoxID;
+		}
 		tabItem.pszText = (LPWSTR)(LPCWSTR)(chatBoxID);
 		m_tabChatBox.InsertItem(availableNewTab, &tabItem);
 

@@ -100,16 +100,18 @@ void CChatBox::OnDBClickReceiveFile() {
 
 	if (fileDlg.DoModal() == IDOK) {
 		pathName = fileDlg.GetPathName();
-		fileInfo.type = (type == BoxType::CHAT_DIRECT ? "uf" : "gf");
+		fileInfo.type = "gf";
 		fileInfo.to = std::string(CT2CA(titleCB, CP_UTF8));
 		fileInfo.message = std::string(CT2CA(fileName, CP_UTF8));
 		response.message = std::string(CT2CA(pathName, CP_UTF8));
 
 		if (p_Document->Send(fileInfo, response)) {
-			AfxMessageBox(L"Finish");
+			CNoti notiSuccess(NotiType::SUCCESS_RECEIVE);
+			notiSuccess.DoModal();
 		}
 		else {
-			AfxMessageBox(L"No");
+			CNoti notiFail(NotiType::FAIL_RECEIVE);
+			notiFail.DoModal();
 		}
 	}
 }

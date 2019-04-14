@@ -1,3 +1,7 @@
+//{{NO_DEPENDENCIES}}
+// Microsoft Visual C++ generated include file.
+// Used by ClientChat.rc
+//
 #define IDD_ABOUTBOX                    100
 #define IDD_About                       100
 #define IDD_MainWnd                     101
@@ -64,7 +68,8 @@
 #define grpMembers                      1063
 #define lstReceivedFiles                1064
 
- 
+// Next default values for new objects
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        326
